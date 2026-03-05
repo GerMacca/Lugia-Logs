@@ -1,0 +1,755 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+// ── Skeleton pulse ────────────────────────────────────────────
+@keyframes skPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.skBox {
+  background: rgba($color-primary, 0.12);
+  border-radius: $radius-md;
+  animation: skPulse 1.4s ease-in-out infinite;
+}
+
+.skPulse {
+  animation: skPulse 1.4s ease-in-out infinite;
+  background: rgba($color-primary, 0.1);
+  border-radius: $radius-lg;
+}
+
+// ── Page base ─────────────────────────────────────────────────
+.page {
+  @include container;
+  padding-block: $space-8 $space-16;
+  background: $color-bg-light;
+  min-height: calc(100vh - 80px);
+}
+
+// ── Skeleton ──────────────────────────────────────────────────
+.skeleton {
+  @include container;
+  padding-block: $space-8 $space-16;
+  background: $color-bg-light;
+}
+
+.skNav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: $space-8;
+}
+
+.skNavBtn {
+  height: 36px;
+  width: 120px;
+}
+
+.skHero {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+
+  @include respond-to("md") {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.skArtwork {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 340px;
+  margin: 0 auto;
+  border-radius: $radius-2xl;
+
+  @include respond-to("md") {
+    width: 340px;
+    flex-shrink: 0;
+  }
+}
+
+.skHeroInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.skInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+  margin-top: $space-6;
+
+  @include respond-to("sm") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.skInfoBlock {
+  height: 64px;
+  border-radius: $radius-lg;
+}
+
+// ── Nav arrows ────────────────────────────────────────────────
+.navArrows {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-8;
+  gap: $space-4;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: $radius-full;
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: $color-text-sub;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition:
+    border-color $transition-fast,
+    color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.4);
+    color: $color-text-dark;
+    box-shadow: 0 2px 8px rgba($color-primary, 0.12);
+  }
+}
+
+.navBack {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  opacity: 0.75;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// ── Error page ────────────────────────────────────────────────
+.errorPage {
+  @include container;
+  padding-block: $space-20;
+  text-align: center;
+  color: $color-text-sub;
+  background: $color-bg-light;
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: $space-4;
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ── Hero ──────────────────────────────────────────────────────
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  margin-bottom: $space-10;
+
+  @include respond-to("md") {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $space-10;
+  }
+}
+
+// ── Artwork side ──────────────────────────────────────────────
+.heroArtwork {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  align-items: center;
+
+  @include respond-to("md") {
+    width: 340px;
+    flex-shrink: 0;
+  }
+}
+
+.artworkWrap {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1;
+  background: $color-bg-light-alt;
+  border-radius: $radius-2xl;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 20px rgba($color-primary, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.artworkGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 60%,
+    var(--type-glow) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.artworkWatermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-family-display;
+  font-size: clamp(3rem, 10vw, 5rem);
+  font-weight: $font-weight-extrabold;
+  color: rgba($color-primary, 0.06);
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.artworkImg {
+  position: relative;
+  z-index: 1;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  transition: transform $transition-base;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.artworkPlaceholder {
+  width: 60%;
+  height: 60%;
+  border-radius: $radius-full;
+  background: rgba($color-primary, 0.08);
+}
+
+.artworkToggles {
+  display: flex;
+  gap: $space-2;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.toggleBtn {
+  padding: $space-2 $space-4;
+  border-radius: $radius-full;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: $color-white;
+  color: $color-text-sub;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.4);
+    color: $color-text-dark;
+  }
+}
+
+.toggleActive {
+  border-color: var(--type-color) !important;
+  color: var(--type-color) !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+// ── Hero info side ────────────────────────────────────────────
+.heroInfo {
+  flex: 1;
+  min-width: 0;
+  padding-top: $space-2;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin-bottom: $space-2;
+}
+
+.heroNumber {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  letter-spacing: 0.05em;
+}
+
+.legendaryBadge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  background: rgba(198, 148, 0, 0.1);
+  color: #9a6f00;
+  border: 1px solid rgba(198, 148, 0, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.heroName {
+  font-family: $font-family-display;
+  font-size: clamp($font-size-3xl, 6vw, $font-size-5xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-text-dark;
+  line-height: $line-height-tight;
+  margin-bottom: $space-2;
+}
+
+.heroGenus {
+  font-size: $font-size-sm;
+  color: $color-text-sub;
+  margin-bottom: $space-4;
+  font-style: italic;
+}
+
+.heroTypes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-5;
+}
+
+.typeBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.typeBadgeSm {
+  font-size: $font-size-xs;
+  padding: 2px $space-2;
+}
+
+.heroFlavor {
+  font-size: $font-size-sm;
+  color: $color-text-sub;
+  line-height: $line-height-relaxed;
+  margin-bottom: $space-6;
+  padding: $space-4;
+  border-left: 2px solid rgba($color-primary, 0.35);
+  background: rgba($color-primary, 0.04);
+  border-radius: 0 $radius-md $radius-md 0;
+  font-style: italic;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+
+  @include respond-to("sm") {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-4;
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-lg;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-faint-light;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.infoValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  line-height: 1;
+}
+
+// ── Sections ──────────────────────────────────────────────────
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.section {
+  padding-block: $space-8;
+  border-top: 1px solid rgba($color-primary, 0.1);
+}
+
+.sectionTitle {
+  font-family: $font-family-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  margin-bottom: $space-6;
+}
+
+// ── Stats ─────────────────────────────────────────────────────
+.statsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 640px;
+}
+
+.statRow {
+  display: grid;
+  grid-template-columns: 130px 44px 1fr;
+  align-items: center;
+  gap: $space-3;
+}
+
+.statName {
+  font-size: $font-size-sm;
+  color: $color-text-sub;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.statNum {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.statTotal {
+  color: $color-primary;
+  font-weight: $font-weight-bold;
+}
+
+.statBarTrack {
+  height: 8px;
+  background: rgba($color-primary, 0.1);
+  border-radius: $radius-full;
+  overflow: hidden;
+}
+
+.statBarFill {
+  height: 100%;
+  border-radius: $radius-full;
+  will-change: width;
+}
+
+// ── Abilities ─────────────────────────────────────────────────
+.abilityGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3;
+
+  @include respond-to("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to("lg") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.abilityCard {
+  padding: $space-4;
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-lg;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition:
+    box-shadow $transition-fast,
+    border-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.3);
+    box-shadow: 0 3px 12px rgba($color-primary, 0.1);
+  }
+}
+
+.abilityHead {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  margin-bottom: $space-2;
+}
+
+.abilityName {
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  font-size: $font-size-md;
+}
+
+.abilityHiddenBadge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  background: rgba($color-primary, 0.08);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.abilityDesc {
+  font-size: $font-size-sm;
+  color: $color-text-sub;
+  line-height: $line-height-relaxed;
+  margin: 0;
+}
+
+// ── Type Effectiveness ────────────────────────────────────────
+.effectivenessGroups {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.effectRow {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-4;
+}
+
+.multLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  min-width: 36px;
+  padding-top: 4px;
+  white-space: nowrap;
+}
+
+.mult4x {
+  color: #c0392b;
+}
+.mult2x {
+  color: #d35400;
+}
+.mult05x {
+  color: #27ae60;
+}
+.mult025x {
+  color: #1e8449;
+}
+.mult0x {
+  color: $color-text-faint-light;
+}
+
+.effectBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+// ── Evolution Chain ───────────────────────────────────────────
+.evoChain {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.evoPath {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: $space-2;
+  overflow-x: auto;
+  padding: $space-1;
+}
+
+.evoStep {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+}
+
+.evoArrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: $color-text-faint-light;
+  padding: 0 $space-1;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.evoCondition {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  white-space: nowrap;
+  text-align: center;
+  max-width: 72px;
+  font-weight: $font-weight-medium;
+}
+
+.evoCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-3;
+  min-width: 80px;
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-xl;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition:
+    border-color $transition-fast,
+    transform $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba($color-primary, 0.12);
+  }
+}
+
+.evoCardCurrent {
+  border-color: var(--type-color) !important;
+  box-shadow:
+    0 0 0 3px rgba(0, 0, 0, 0.06),
+    0 4px 16px var(--type-glow) !important;
+}
+
+.evoSprite {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
+}
+
+.evoSpritePlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: $radius-full;
+  background: rgba($color-primary, 0.08);
+}
+
+.evoName {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.evoTypes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+}
+
+.evoLoadingRow {
+  height: 120px;
+  border-radius: $radius-xl;
+}
+
+.noEvoMsg {
+  color: $color-text-sub;
+  font-size: $font-size-sm;
+}
+
+// ── Alternate Forms ───────────────────────────────────────────
+.formsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: $space-4;
+
+  @include respond-to("sm") {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-4 $space-3;
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-xl;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition:
+    border-color $transition-fast,
+    transform $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    border-color: var(--form-color);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.formSprite {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
+}
+
+.formName {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  text-align: center;
+  line-height: $line-height-normal;
+}
+
+.formTypes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+}

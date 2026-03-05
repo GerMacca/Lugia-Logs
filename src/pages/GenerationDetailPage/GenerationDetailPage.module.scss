@@ -1,0 +1,24 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.page {
+  @include container;
+  padding-block: $space-16;
+}
+
+.title {
+  font-family: $font-family-display;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+  margin-bottom: $space-4;
+}
+
+.wip {
+  font-size: $font-size-md;
+  color: $color-text-faint;
+  padding: $space-12;
+  text-align: center;
+  border: 1px dashed $color-border;
+  border-radius: $radius-xl;
+}

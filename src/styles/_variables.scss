@@ -1,0 +1,148 @@
+// ============================================================
+// LUGIA LOGS — Design Tokens
+// ============================================================
+
+// ── Brand Colors — Lugia ─────────────────────────────────────
+$color-primary: #485a95; // corpo do Lugia (azul médio)
+$color-primary-dark: #354372;
+$color-primary-light: #6b82be;
+
+$color-secondary: #a0b7df; // asas / azul celeste
+$color-secondary-dark: #7d97c8;
+
+$color-accent: #efeff8; // barriga branca do Lugia
+// #2b2c29 reservado — usar com extrema moderação
+
+// ── Background Colors (navy profundo) ───────────────────────
+$color-bg: #080c18;
+$color-bg-surface: #0c1020;
+$color-bg-card: #101525;
+$color-bg-elevated: #15203a;
+
+// ── Light Theme Tokens ───────────────────────────────────────
+$color-bg-light: #f7f9ff; // hero / pages com fundo claro
+$color-bg-light-alt: #eef2fb; // seções alternadas (Features)
+$color-text-dark: #0d1429; // texto principal sobre fundo claro
+$color-text-sub: #4a5680; // texto secundário sobre fundo claro
+$color-text-faint-light: #8294bb; // texto apagado sobre fundo claro
+
+// ── Text Colors ─────────────────────────────────────────────
+$color-text: #efeff8; // branco Lugia
+$color-text-muted: #8fa3c8; // azul-aço suave
+$color-text-faint: #4a567a;
+$color-white: #ffffff;
+$color-black: #000000;
+
+// ── Border ──────────────────────────────────────────────────
+$color-border: rgba(160, 183, 223, 0.1);
+$color-border-hover: rgba(160, 183, 223, 0.22);
+
+// ── Pokémon Type Colors ─────────────────────────────────────
+$type-normal: #9a9a6e;
+$type-fire: #f08030;
+$type-water: #6890f0;
+$type-electric: #f8d030;
+$type-grass: #78c850;
+$type-ice: #98d8d8;
+$type-fighting: #c03028;
+$type-poison: #a040a0;
+$type-ground: #e0c068;
+$type-flying: #a890f0;
+$type-psychic: #f85888;
+$type-bug: #a8b820;
+$type-rock: #b8a038;
+$type-ghost: #705898;
+$type-dragon: #7038f8;
+$type-dark: #705848;
+$type-steel: #b8b8d0;
+$type-fairy: #ee99ac;
+
+// ── Typography ──────────────────────────────────────────────
+$font-family-base:
+  "Inter",
+  system-ui,
+  -apple-system,
+  sans-serif;
+$font-family-display: "Space Grotesk", "Inter", sans-serif;
+$font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+$font-size-4xl: 2.25rem;
+$font-size-5xl: 3rem;
+$font-size-6xl: 3.75rem;
+
+// Legacy aliases — usados por Typography.scss via var()
+$font-size-display-xl: 4.5rem; // h1
+$font-size-display-lg: 2.8rem; // h2
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.7;
+
+// ── Spacing (escala 4px) ─────────────────────────────────────
+$space-1: 0.25rem;
+$space-2: 0.5rem;
+$space-3: 0.75rem;
+$space-4: 1rem;
+$space-5: 1.25rem;
+$space-6: 1.5rem;
+$space-8: 2rem;
+$space-10: 2.5rem;
+$space-12: 3rem;
+$space-16: 4rem;
+$space-20: 5rem;
+$space-24: 6rem;
+$space-32: 8rem;
+
+// ── Layout ───────────────────────────────────────────────────
+$container-max: 1500px;
+$container-padding: $space-6;
+$section-padding-y: $space-20;
+$navbar-height: 80px;
+
+// ── Border Radius ────────────────────────────────────────────
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 24px;
+$radius-full: 9999px;
+
+// ── Shadows ──────────────────────────────────────────────────
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+$shadow-glow-primary: 0 0 28px rgba(72, 90, 149, 0.45);
+$shadow-glow-accent: 0 0 28px rgba(160, 183, 223, 0.35);
+
+// ── Transitions ──────────────────────────────────────────────
+$transition-fast: 150ms ease;
+$transition-base: 250ms ease;
+$transition-slow: 400ms ease;
+
+// ── Z-index ──────────────────────────────────────────────────
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-overlay: 300;
+$z-modal: 400;
+$z-tooltip: 500;
+
+// ── Breakpoints ──────────────────────────────────────────────
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+$bp-2xl: 1536px;

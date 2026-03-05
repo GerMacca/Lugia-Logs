@@ -1,0 +1,279 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+// ── Header ────────────────────────────────────────────────────────
+.header {
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+  background: rgba($color-bg, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid $color-border;
+}
+
+// ── Nav (barra do topo) ───────────────────────────────────────────
+.nav {
+  @include container;
+  display: flex;
+  align-items: center;
+  height: $navbar-height;
+
+  // Grid de 3 colunas no desktop para centralizar os links
+  @include respond-to('md') {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+}
+
+// ── Logo ──────────────────────────────────────────────────────────
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+  font-family: $font-family-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  transition: opacity $transition-fast;
+
+  @include respond-to('md') {
+    justify-self: start;
+  }
+
+  &:hover { opacity: 0.85; }
+}
+
+.logoImg {
+  height: 66px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logoAccent { color: $color-secondary; }
+
+// ── Links desktop ─────────────────────────────────────────────────
+.links {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @include respond-to('md') {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-8;
+  }
+}
+
+.link {
+  position: relative;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  text-decoration: none;
+  padding-block: $space-1;
+  transition: color $transition-fast;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: $color-secondary;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform $transition-fast;
+  }
+
+  &:hover {
+    color: $color-text;
+    &::after { transform: scaleX(0.5); }
+  }
+}
+
+.linkActive {
+  color: $color-secondary;
+  &::after { transform: scaleX(1) !important; }
+}
+
+// ── Ações desktop ─────────────────────────────────────────────────
+.actions {
+  display: none;
+
+  @include respond-to('md') {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    justify-self: end;
+  }
+}
+
+.loginBtn {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  text-decoration: none;
+  padding: $space-2 $space-4;
+  border-radius: $radius-full;
+  transition: color $transition-fast;
+
+  &:hover { color: $color-text; }
+}
+
+.registerBtn {
+  @include button-base;
+  padding: $space-2 $space-5;
+  font-size: $font-size-sm;
+  background: $color-primary;
+  color: $color-white;
+
+  &:hover { background: $color-primary-dark; }
+}
+
+// ── Hamburger ─────────────────────────────────────────────────────
+.burger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 5px;
+  background: none;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover { background: rgba($color-text, 0.06); }
+
+  span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: $color-text;
+    border-radius: 2px;
+    transform-origin: center;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+  }
+
+  // Animação → X
+  &.burgerOpen {
+    span:nth-child(1) { transform: translateY(7px) rotate(45deg);  }
+    span:nth-child(2) { opacity: 0; transform: scaleX(0);          }
+    span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  }
+
+  @include respond-to('md') { display: none; }
+}
+
+// ── Menu mobile ───────────────────────────────────────────────────
+.mobileMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba($color-bg, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid $color-border;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+
+  // Animação de abertura
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    clip-path 0.3s ease,
+    opacity 0.25s ease;
+
+  &.mobileMenuOpen {
+    clip-path: inset(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @include respond-to('md') { display: none; }
+}
+
+.mobileMenuInner {
+  @include container;
+  padding-block: $space-6 $space-8;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+// Links mobile (grandes, estilo editorial)
+.mobileLinks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileLink {
+  display: block;
+  padding: $space-4 0;
+  font-family: $font-family-display;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
+  text-decoration: none;
+  border-bottom: 1px solid $color-border;
+  transition: color $transition-fast, padding-left 0.22s ease;
+
+  &:hover {
+    color: $color-text;
+    padding-left: $space-3;
+  }
+}
+
+.mobileLinkActive { color: $color-secondary; }
+
+// Botões de ação mobile
+.mobileActions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.mobileLoginBtn {
+  display: block;
+  text-align: center;
+  padding: $space-3;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  text-decoration: none;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  transition: color $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    color: $color-text;
+    border-color: rgba($color-text, 0.3);
+  }
+}
+
+.mobileRegisterBtn {
+  @include button-base;
+  display: block;
+  text-align: center;
+  padding: $space-3;
+  font-size: $font-size-sm;
+  background: $color-primary;
+  color: $color-white;
+
+  &:hover { background: $color-primary-dark; }
+}

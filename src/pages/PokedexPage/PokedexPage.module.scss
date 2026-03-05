@@ -1,0 +1,998 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+// ── Page Header ───────────────────────────────────────────────────
+.pageHeader {
+  background: $color-bg-light;
+  position: relative;
+  overflow: hidden;
+  padding-block: $space-16 $space-12;
+  border-bottom: 1px solid rgba($color-primary, 0.1);
+}
+
+.headerBlob {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 55% 80% at 15% 50%,
+      rgba($color-primary, 0.07) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 40% 50% at 85% 30%,
+      rgba($color-secondary, 0.05) 0%,
+      transparent 55%
+    );
+}
+
+.headerInner {
+  @include container;
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-primary;
+  margin-bottom: $space-3;
+}
+
+.pageTitle {
+  font-family: $font-family-display;
+  font-size: clamp($font-size-5xl, 7vw, $font-size-6xl);
+  font-weight: $font-weight-extrabold;
+  color: $color-text-dark;
+  line-height: $line-height-tight;
+  margin-bottom: $space-4;
+}
+
+.titleAccent {
+  color: $color-primary;
+}
+
+.pageSubtitle {
+  font-size: $font-size-lg;
+  color: $color-text-sub;
+  line-height: $line-height-relaxed;
+  max-width: 520px;
+  margin-bottom: $space-8;
+}
+
+.headerStats {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+}
+
+.hStat {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.hStatValue {
+  font-family: $font-family-display;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  line-height: 1;
+}
+
+.hStatLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-text-faint-light;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hStatDivider {
+  width: 1px;
+  height: 40px;
+  background: rgba($color-primary, 0.15);
+}
+
+// ── Barra de filtros ──────────────────────────────────────────────
+.filtersBar {
+  position: sticky;
+  top: $navbar-height;
+  z-index: $z-sticky - 1;
+  background: rgba($color-bg-light, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba($color-primary, 0.1);
+}
+
+// Linha superior (busca + botão)
+.filterRow {
+  @include container;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding-block: $space-3;
+}
+
+// Search
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+
+  @include respond-to("md") {
+    max-width: 380px;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: $space-3;
+  color: $color-text-faint-light;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  background: $color-white;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $radius-full;
+  padding: $space-2 $space-8 $space-2 $space-8;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  color: $color-text-dark;
+  outline: none;
+  transition: border-color $transition-fast;
+
+  &::placeholder {
+    color: $color-text-faint-light;
+  }
+
+  &:focus {
+    border-color: rgba($color-primary, 0.5);
+  }
+}
+
+.searchClear {
+  position: absolute;
+  right: $space-3;
+  background: none;
+  border: none;
+  color: $color-text-faint-light;
+  cursor: pointer;
+  font-size: $font-size-lg;
+  line-height: 1;
+  padding: 0;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-text-sub;
+  }
+}
+
+// Botão "Filtros"
+.filterToggle {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  padding: $space-2 $space-4;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-primary, 0.2);
+  background: transparent;
+  color: $color-text-sub;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.45);
+    background: rgba($color-primary, 0.05);
+    color: $color-text-dark;
+  }
+}
+
+.filterToggleOpen {
+  border-color: $color-primary;
+  background: rgba($color-primary, 0.08);
+  color: $color-text-dark;
+}
+
+.filterBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  border-radius: $radius-full;
+  background: $color-primary;
+  color: $color-white;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+// Painel overlay
+.filterPanel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba($color-bg-light, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba($color-primary, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    clip-path 0.25s ease,
+    opacity 0.2s ease;
+}
+
+.filterPanelOpen {
+  clip-path: inset(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.filterPanelInner {
+  @include container;
+  padding-block: $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  max-height: 72vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba($color-primary, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.2);
+    border-radius: $radius-full;
+  }
+}
+
+// Seção dentro do painel (ex: Tipo, Geração...)
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.filterSectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filterSectionLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-text-faint-light;
+}
+
+.clearBtn {
+  font-family: $font-family-base;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-primary;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+// Grid de chips (todos visíveis, sem scroll)
+.typeGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+// Chips de tipo
+.typeChip {
+  flex-shrink: 0;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-primary, 0.2);
+  background: transparent;
+  color: $color-text-sub;
+  cursor: pointer;
+  transition: all $transition-fast;
+  white-space: nowrap;
+
+  &:hover:not(.typeChipActive) {
+    border-color: rgba($color-primary, 0.45);
+    background: rgba($color-primary, 0.05);
+    color: $color-text-dark;
+  }
+}
+
+.typeChipActive {
+  background: $color-primary;
+  border-color: $color-primary;
+  color: $color-white;
+}
+
+// ── Grid section ──────────────────────────────────────────────────
+.gridSection {
+  background: $color-bg-light-alt;
+  min-height: 60vh;
+}
+
+.gridInner {
+  @include container;
+  padding-block: $space-8 $space-20;
+
+  @include respond-to("lg") {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: $space-8;
+    align-items: start;
+  }
+
+  @include respond-to("xl") {
+    grid-template-columns: 210px 1fr 220px;
+  }
+}
+
+// ── Sidebar (desktop) ─────────────────────────────────────────────
+.sidebar {
+  display: none;
+
+  @include respond-to("lg") {
+    display: flex;
+    flex-direction: column;
+    gap: $space-5;
+    position: sticky;
+    // abaixo da navbar (80px) + filter bar (~56px) + folga
+    top: calc($navbar-height + 56px + $space-4);
+    max-height: calc(100vh - $navbar-height - 56px - $space-8);
+    overflow-y: auto;
+    background: $color-white;
+    border: 1px solid rgba($color-primary, 0.1);
+    border-radius: $radius-xl;
+    padding: $space-5;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+    // Scrollbar fina e discreta
+    scrollbar-width: thin;
+    scrollbar-color: rgba($color-primary, 0.2) transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba($color-primary, 0.2);
+      border-radius: $radius-full;
+    }
+  }
+}
+
+.sidebarSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.sidebarHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebarLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-text-faint-light;
+}
+
+// ── Select de ordenação ───────────────────────────────────────────
+.sortSelect {
+  width: 100%;
+  font-family: $font-family-base;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-text-dark;
+  background: $color-white;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $radius-md;
+  padding: $space-2 $space-3;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a5680' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-3 center;
+  padding-right: $space-8;
+  transition: border-color $transition-fast;
+
+  &:focus,
+  &:hover {
+    border-color: rgba($color-primary, 0.45);
+  }
+}
+
+// ── Divisor entre seções da sidebar ──────────────────────────────
+.sidebarDivider {
+  border: none;
+  border-top: 1px solid rgba($color-primary, 0.1);
+  margin: 0;
+}
+
+// Esconder toggle e painel no desktop (sidebar substitui)
+@include respond-to("lg") {
+  .filterToggle {
+    display: none;
+  }
+  .filterPanel {
+    display: none !important;
+  }
+}
+
+// ── Grid principal ────────────────────────────────────────────────
+.gridMain {
+  min-width: 0; // evita overflow no grid CSS
+}
+
+.resultsInfo {
+  font-size: $font-size-sm;
+  color: $color-text-faint-light;
+  margin-bottom: $space-6;
+}
+
+.loadingAllMsg {
+  font-size: $font-size-sm;
+  color: $color-secondary;
+  margin-bottom: $space-4;
+  opacity: 0.8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-4;
+
+  @include respond-to("sm") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to("md") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ── Card ──────────────────────────────────────────────────────────
+.card {
+  position: relative;
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-xl;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+
+  // Linha de cor do tipo sempre visível no rodapé
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--type-color, $color-primary);
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    border-color: var(--type-color, $color-primary);
+    box-shadow: 0 20px 48px -8px var(--type-shadow, rgba(72, 90, 149, 0.3));
+  }
+}
+
+// Área superior com fundo colorido
+.cardArtSection {
+  position: relative;
+  background: var(--type-bg, rgba(72, 90, 149, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-6 $space-4 $space-5;
+  overflow: hidden;
+  min-height: 152px;
+}
+
+// Número watermark (decorativo)
+.cardWatermark {
+  position: absolute;
+  bottom: -6px;
+  right: $space-2;
+  font-family: $font-family-display;
+  font-size: 68px;
+  font-weight: $font-weight-extrabold;
+  color: $color-text-dark;
+  opacity: 0.06;
+  line-height: 1;
+  letter-spacing: -2px;
+  pointer-events: none;
+  user-select: none;
+}
+
+// Glow atrás da arte
+.cardGlow {
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background: var(--type-color, $color-primary);
+  opacity: 0.1;
+  filter: blur(22px);
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+
+  .card:hover & {
+    opacity: 0.28;
+  }
+}
+
+// Artwork
+.cardArt {
+  position: relative;
+  z-index: 1;
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.14));
+
+  .card:hover & {
+    transform: scale(1.1) translateY(-4px);
+  }
+}
+
+// Seção de info
+.cardInfo {
+  padding: $space-3 $space-4 $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.cardName {
+  font-family: $font-family-display;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  line-height: 1.2;
+}
+
+.cardTypes {
+  display: flex;
+  gap: $space-1;
+  flex-wrap: wrap;
+}
+
+.cardType {
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+}
+
+// ── Sidebar direita ───────────────────────────────────────────────
+.rightSidebar {
+  display: none;
+
+  @include respond-to("xl") {
+    display: block;
+    position: sticky;
+    top: calc($navbar-height + 56px + $space-4);
+  }
+}
+
+// ── Pokémon do Dia ────────────────────────────────────────────────
+.potd {
+  background: $color-white;
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: 0 8px 32px -4px var(--type-shadow, rgba(72, 90, 149, 0.22));
+  }
+}
+
+.potdHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 $space-4 $space-2;
+}
+
+.potdTitle {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-text-faint-light;
+}
+
+.potdDate {
+  font-size: $font-size-xs;
+  color: $color-text-faint-light;
+}
+
+.potdArtSection {
+  position: relative;
+  background: var(--type-bg, rgba(72, 90, 149, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-5 $space-4;
+  overflow: hidden;
+}
+
+.potdWatermark {
+  position: absolute;
+  bottom: -8px;
+  right: $space-2;
+  font-family: $font-family-display;
+  font-size: 54px;
+  font-weight: $font-weight-extrabold;
+  color: $color-text-dark;
+  opacity: 0.06;
+  line-height: 1;
+  letter-spacing: -2px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.potdGlow {
+  position: absolute;
+  inset: 20%;
+  border-radius: 50%;
+  background: var(--type-color, $color-primary);
+  opacity: 0.12;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.potdArt {
+  position: relative;
+  z-index: 1;
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.14));
+  transition: transform 0.3s ease;
+
+  .potd:hover & {
+    transform: scale(1.05) translateY(-3px);
+  }
+}
+
+.potdInfo {
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.potdName {
+  font-family: $font-family-display;
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  line-height: 1.2;
+}
+
+.potdTypes {
+  display: flex;
+  gap: $space-1;
+  flex-wrap: wrap;
+}
+
+.potdType {
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+}
+
+.potdStats {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.potdStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.potdStatRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.potdStatName {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-text-sub;
+}
+
+.potdStatVal {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  font-family: $font-family-display;
+  color: $color-text-dark;
+}
+
+.potdStatBar {
+  height: 4px;
+  background: rgba($color-primary, 0.1);
+  border-radius: $radius-full;
+  overflow: hidden;
+}
+
+.potdStatFill {
+  height: 100%;
+  border-radius: $radius-full;
+  transition: width 0.6s ease;
+}
+
+.potdLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: $radius-full;
+  border: 1px solid var(--type-color, $color-primary);
+  color: var(--type-color, $color-primary);
+  text-decoration: none;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  transition:
+    background $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    background: var(--type-color, $color-primary);
+    color: $color-white;
+  }
+}
+
+// Skeleton do widget
+.potdSkeleton {
+  background: $color-white;
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $radius-xl;
+  overflow: hidden;
+}
+
+.potdSkArt {
+  height: 160px;
+  background: rgba($color-primary, 0.05);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.potdSkInfo {
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+// ── Scroll to top ─────────────────────────────────────────────────
+.scrollTopBtn {
+  position: fixed;
+  bottom: $space-6;
+  right: $space-6;
+  z-index: $z-sticky - 1;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: $color-primary;
+  color: $color-white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba($color-primary, 0.4);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    background $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    background: $color-primary-dark;
+    box-shadow: 0 8px 28px rgba($color-primary, 0.55);
+    transform: translateY(-2px);
+  }
+}
+
+.scrollTopBtnVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+// ── Infinite scroll ───────────────────────────────────────────────
+.sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.loadingMoreGrid {
+  margin-top: $space-4;
+}
+
+// ── Error / Empty ─────────────────────────────────────────────────
+.errorState,
+.emptyState {
+  @include flex-center;
+  padding: $space-16;
+  color: $color-text-sub;
+  font-size: $font-size-md;
+  border: 1px dashed rgba($color-primary, 0.25);
+  border-radius: $radius-xl;
+  text-align: center;
+}
+
+@keyframes dotBounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-7px);
+    opacity: 1;
+  }
+}
+
+.searchingState {
+  @include flex-center;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-16;
+  border: 1px dashed rgba($color-primary, 0.25);
+  border-radius: $radius-xl;
+  text-align: center;
+}
+
+.searchingText {
+  color: $color-text-sub;
+  font-size: $font-size-md;
+}
+
+.searchingDots {
+  display: flex;
+  gap: $space-2;
+
+  span {
+    width: 8px;
+    height: 8px;
+    background: $color-primary;
+    border-radius: 50%;
+    animation: dotBounce 1.2s infinite ease-in-out;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.skeletonCard {
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-xl;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.skArtSection {
+  background: rgba($color-primary, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-6 $space-4 $space-5;
+}
+
+.skInfo {
+  padding: $space-3 $space-4 $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.skBox {
+  background: rgba($color-primary, 0.1);
+  border-radius: $radius-md;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skArt {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+}
+
+.skName {
+  width: 60%;
+  height: 13px;
+  border-radius: $radius-full;
+}
+
+.skType {
+  width: 42%;
+  height: 20px;
+  border-radius: $radius-full;
+}

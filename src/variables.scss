@@ -1,0 +1,3 @@
+// Forward file — mantém compatibilidade com componentes que importam src/variables.scss
+// Todos os tokens vivem em src/styles/_variables.scss
+@forward './styles/variables';

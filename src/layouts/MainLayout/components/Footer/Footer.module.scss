@@ -1,0 +1,125 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.footer {
+  background: $color-bg-surface;
+  border-top: 1px solid $color-border;
+  margin-top: auto;
+}
+
+.inner {
+  @include container;
+  padding-block: $space-12;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-12;
+  margin-bottom: $space-10;
+
+  @media (max-width: $bp-md) {
+    flex-direction: column;
+    gap: $space-8;
+  }
+}
+
+.brand {
+  max-width: 280px;
+}
+
+.brandName {
+  display: inline-block;
+  font-family: $font-family-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+  margin-bottom: $space-3;
+  transition: opacity $transition-fast;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-2;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.brandAccent {
+  color: $color-primary;
+}
+
+.brandTagline {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  line-height: $line-height-relaxed;
+}
+
+.logoimg {
+  height: 66px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footerNav {
+  display: flex;
+  gap: $space-12;
+}
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.navGroupTitle {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-text-faint;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.navLink {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-text;
+  }
+}
+
+.bottom {
+  padding-top: $space-8;
+  border-top: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.copy {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.disclaimer {
+  font-size: $font-size-xs;
+  color: $color-text-faint;
+}
+
+.externalLink {
+  color: $color-primary-light;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-primary;
+  }
+}

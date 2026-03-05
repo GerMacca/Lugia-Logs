@@ -1,0 +1,40 @@
+@use './styles/reset';
+@use './styles/variables' as vars;
+
+// ── CSS Custom Properties ─────────────────────────────────────
+// Usadas pelos componentes legados (ex: Typography.scss) via var()
+:root {
+  // Fonts
+  --font-family-base:    #{vars.$font-family-base};
+  --font-family-title:   #{vars.$font-family-display};
+  --font-family-mono:    #{vars.$font-family-mono};
+
+  // Font sizes (legado Typography.scss)
+  --font-size-xl:  #{vars.$font-size-display-xl};
+  --font-size-lg:  #{vars.$font-size-display-lg};
+  --font-size-sm:  #{vars.$font-size-md};
+
+  // Line-height
+  --line-height-base: #{vars.$line-height-relaxed};
+
+  // Colors
+  --color-text:       #{vars.$color-text};
+  --color-text-light: #{vars.$color-text-muted};
+  --color-primary:    #{vars.$color-primary};
+  --color-secondary:  #{vars.$color-secondary};
+  --color-accent:     #{vars.$color-accent};
+  --color-bg:         #{vars.$color-bg};
+  --color-bg-card:    #{vars.$color-bg-card};
+
+  // Transitions
+  --transition-default: #{vars.$transition-base};
+}
+
+// ── Base ──────────────────────────────────────────────────────
+body {
+  font-family: vars.$font-family-base;
+  background-color: vars.$color-bg;
+  color: vars.$color-text;
+  font-size: vars.$font-size-md;
+  line-height: vars.$line-height-normal;
+}

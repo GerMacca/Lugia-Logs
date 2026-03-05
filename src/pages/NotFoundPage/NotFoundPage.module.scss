@@ -1,0 +1,53 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.page {
+  @include container;
+  @include flex-center;
+  flex-direction: column;
+  text-align: center;
+  padding-block: $space-32;
+  min-height: 70vh;
+  gap: $space-4;
+}
+
+.code {
+  font-family: $font-family-display;
+  font-size: clamp($font-size-6xl, 15vw, 10rem);
+  font-weight: $font-weight-extrabold;
+  line-height: 1;
+  @include gradient-text($color-primary, $color-accent);
+  margin-bottom: $space-4;
+}
+
+.title {
+  font-family: $font-family-display;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+}
+
+.subtitle {
+  font-size: $font-size-md;
+  color: $color-text-muted;
+  max-width: 420px;
+  line-height: $line-height-relaxed;
+}
+
+.btn {
+  @include button-base;
+  padding: $space-4 $space-8;
+  font-size: $font-size-md;
+  background: $color-primary;
+  color: $color-white;
+  margin-top: $space-4;
+
+  &:hover {
+    background: $color-primary-dark;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
