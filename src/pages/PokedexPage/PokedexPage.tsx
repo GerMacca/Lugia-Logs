@@ -369,6 +369,8 @@ const PokedexPage: React.FC = () => {
     return () => observer.disconnect();
   }, [hasMore, loadingMore, loading, loadMore]);
 
+  const [rgValue, setRgValue] = useState(3);
+
   return (
     <MainLayout>
 
@@ -437,6 +439,9 @@ const PokedexPage: React.FC = () => {
               </button>
             )}
           </div>
+
+          <input type="range" value={rgValue} min={3} max={5} />
+          <span>{}</span>
 
           <button
             className={`${styles.filterToggle}${filtersOpen ? ` ${styles.filterToggleOpen}` : ''}`}

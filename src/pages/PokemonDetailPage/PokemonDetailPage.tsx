@@ -392,12 +392,10 @@ const PokemonDetailPage: React.FC = () => {
     usePokemonDetail(id);
 
   const [shiny, setShiny]   = useState(false);
-  const [female, setFemale] = useState(false);
 
   // Reset toggles on pokemon change
   useEffect(() => {
     setShiny(false);
-    setFemale(false);
   }, [id]);
 
   if (loading) return <MainLayout><PageSkeleton /></MainLayout>;
@@ -414,21 +412,12 @@ const PokemonDetailPage: React.FC = () => {
   }
 
   // ── Artwork selection ────────────────────────────────────────
-  const hasGender  = !!pokemon.sprites.front_female;
-  const hasShiny   = !!(female
-    ? (pokemon.sprites.other?.home?.front_shiny_female ?? pokemon.sprites.front_shiny_female)
-    : pokemon.sprites.other['official-artwork'].front_shiny);
+  const hasShiny = pokemon.sprites.other['official-artwork'].front_shiny;
 
   let artworkSrc: string | null;
-  if (female) {
-    artworkSrc = shiny
-      ? (pokemon.sprites.other?.home?.front_shiny_female ?? pokemon.sprites.front_shiny_female)
-      : (pokemon.sprites.other?.home?.front_female ?? pokemon.sprites.front_female);
-  } else {
-    artworkSrc = shiny
+  artworkSrc = shiny
       ? pokemon.sprites.other['official-artwork'].front_shiny
       : pokemon.sprites.other['official-artwork'].front_default;
-  }
 
   // ── Type color for glow ──────────────────────────────────────
   const primaryType = pokemon.types[0]?.type.name ?? 'normal';
@@ -482,11 +471,8 @@ const PokemonDetailPage: React.FC = () => {
             </Link>
           )}
         </div>
-
-        {/* ── Hero ─────────────────────────────────────────── */}
+        
         <div className={styles.hero}>
-
-          {/* Artwork side */}
           <div className={styles.heroArtwork}>
             <div className={styles.artworkWrap}>
               <div className={styles.artworkGlow} aria-hidden="true" />
@@ -495,7 +481,7 @@ const PokemonDetailPage: React.FC = () => {
               </div>
               {artworkSrc ? (
                 <img
-                  key={`${id}-${shiny}-${female}`}
+                  key={`${id}-${shiny}`}
                   src={artworkSrc}
                   alt={capitalize(pokemon.name)}
                   className={styles.artworkImg}
@@ -517,19 +503,9 @@ const PokemonDetailPage: React.FC = () => {
                   ✦ Shiny
                 </button>
               )}
-              {hasGender && (
-                <button
-                  className={`${styles.toggleBtn} ${female ? styles.toggleActive : ''}`}
-                  onClick={() => setFemale(v => !v)}
-                  aria-pressed={female}
-                >
-                  {female ? '♀ Fêmea' : '♂ Macho'}
-                </button>
-              )}
             </div>
           </div>
 
-          {/* Info side */}
           <div className={styles.heroInfo}>
             <div className={styles.heroMeta}>
               <span className={styles.heroNumber}>#{String(displayId).padStart(4, '0')}</span>

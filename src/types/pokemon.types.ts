@@ -29,8 +29,6 @@ export interface PokemonDetail {
 export interface PokemonSprites {
   front_default: string | null;
   front_shiny: string | null;
-  front_female: string | null;
-  front_shiny_female: string | null;
   other: {
     'official-artwork': {
       front_default: string | null;
@@ -39,8 +37,6 @@ export interface PokemonSprites {
     home?: {
       front_default: string | null;
       front_shiny: string | null;
-      front_female: string | null;
-      front_shiny_female: string | null;
     };
   };
 }
