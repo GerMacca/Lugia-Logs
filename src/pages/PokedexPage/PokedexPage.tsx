@@ -42,7 +42,7 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 const TYPE_NAMES_PT: Record<string, string> = {
   normal: 'Normal', fire: 'Fogo', water: 'Água',
   electric: 'Elétrico', grass: 'Planta', ice: 'Gelo',
-  fighting: 'Lutador', poison: 'Venenoso', ground: 'Terra',
+  fighting: 'Lutador', poison: 'Venenoso', ground: 'Terrestre',
   flying: 'Voador', psychic: 'Psíquico', bug: 'Inseto',
   rock: 'Pedra', ghost: 'Fantasma', dragon: 'Dragão',
   dark: 'Sombrio', steel: 'Aço', fairy: 'Fada',
@@ -265,8 +265,8 @@ function PokemonOfDay() {
 const PokedexPage: React.FC = () => {
   const location = useLocation();
   const {
-    pokemon, loading, loadingMore, isLoadingAll, error,
-    hasMore, loadMore, total,
+    pokemon, loading, loadingAll, error,
+    total,
     search, setSearch,
     typeFilter, setTypeFilter,
     genFilter, setGenFilter,
@@ -274,6 +274,9 @@ const PokedexPage: React.FC = () => {
     weightFilter, setWeightFilter,
     sortBy, setSortBy,
   } = usePokedex();
+
+  // Quando ordenação não-padrão está ativa, aguarda todos os dados estarem carregados
+  const isLoadingAll = loadingAll && sortBy !== 'id';
 
   const isFiltered =
     !!search ||
@@ -286,12 +289,6 @@ const PokedexPage: React.FC = () => {
   const [scrollTargetId, setScrollTargetId] = useState<number | null>(
     () => (location.state as { scrollToId?: number } | null)?.scrollToId ?? null
   );
-
-  // Auto-load more pages until target pokemon is in the list
-  useEffect(() => {
-    if (!scrollTargetId || loading || loadingMore || !hasMore) return;
-    if (!pokemon.some(p => p.id === scrollTargetId)) loadMore();
-  }, [scrollTargetId, pokemon, hasMore, loading, loadingMore, loadMore]);
 
   // Scroll once the card is rendered
   useEffect(() => {
@@ -351,23 +348,6 @@ const PokedexPage: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // ── Infinite scroll ──────────────────────────────────────────────
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el || !hasMore || loadingMore || loading) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) loadMore();
-      },
-      { rootMargin: '300px', threshold: 0 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasMore, loadingMore, loading, loadMore]);
 
   const [rgValue, setRgValue] = useState(3);
 
@@ -440,8 +420,19 @@ const PokedexPage: React.FC = () => {
             )}
           </div>
 
-          <input type="range" value={rgValue} min={3} max={5} />
-          <span>{}</span>
+          <div className={styles.colsControl}>
+            <input
+              type="range"
+              className={styles.colsRange}
+              value={rgValue}
+              min={3}
+              max={5}
+              step={1}
+              onChange={e => setRgValue(Number(e.target.value))}
+              aria-label="Colunas por linha"
+            />
+            <span className={styles.colsValue}>{rgValue}</span>
+          </div>
 
           <button
             className={`${styles.filterToggle}${filtersOpen ? ` ${styles.filterToggleOpen}` : ''}`}
@@ -803,7 +794,13 @@ const PokedexPage: React.FC = () => {
             )}
 
             {!error && (
-              <div className={styles.grid}>
+              <div
+                className={styles.grid}
+                style={{
+                  '--cols': rgValue,
+                  '--watermark-size': rgValue === 3 ? '68px' : rgValue === 4 ? '58px' : '42px',
+                } as React.CSSProperties}
+              >
                 {(loading || isLoadingAll)
                   ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
                     <SkeletonCard key={i} />
@@ -813,7 +810,7 @@ const PokedexPage: React.FC = () => {
               </div>
             )}
 
-            {!loading && !isLoadingAll && !error && pokemon.length === 0 && isFiltered && (loadingMore || hasMore) && (
+            {!loading && !isLoadingAll && !error && pokemon.length === 0 && isFiltered && loadingAll && (
               <div className={styles.searchingState}>
                 <p className={styles.searchingText}>Buscando Pokémon</p>
                 <div className={styles.searchingDots}>
@@ -822,22 +819,10 @@ const PokedexPage: React.FC = () => {
               </div>
             )}
 
-            {!loading && !isLoadingAll && !error && pokemon.length === 0 && (!isFiltered || (!loadingMore && !hasMore)) && (
+            {!loading && !isLoadingAll && !error && pokemon.length === 0 && (!isFiltered || !loadingAll) && (
               <div className={styles.emptyState}>
                 <p>Nenhum Pokémon encontrado para essa busca.</p>
               </div>
-            )}
-
-            {loadingMore && !isLoadingAll && !isFiltered && (
-              <div className={`${styles.grid} ${styles.loadingMoreGrid}`}>
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <SkeletonCard key={`more-${i}`} />
-                ))}
-              </div>
-            )}
-
-            {!loading && !isLoadingAll && !error && hasMore && (
-              <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
             )}
 
           </div>

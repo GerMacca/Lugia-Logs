@@ -146,3 +146,20 @@ export interface EvolutionChainResponse {
   id: number;
   chain: ChainLink;
 }
+
+// ── Encounters ────────────────────────────────────────────────
+export interface EncounterMethodDetail {
+  method: { name: string };
+  chance: number;
+  min_level: number;
+  max_level: number;
+}
+
+export interface PokemonEncounterEntry {
+  location_area: { name: string };
+  version_details: Array<{
+    version: { name: string };
+    max_chance: number;
+    encounter_details: EncounterMethodDetail[];
+  }>;
+}

@@ -6,6 +6,7 @@ import type {
   Generation,
   PokemonTypeResponse,
   EvolutionChainResponse,
+  PokemonEncounterEntry,
 } from '../types/pokemon.types';
 
 const BASE_URL = 'https://pokeapi.co/api/v2';
@@ -39,4 +40,7 @@ export const pokemonService = {
 
   getEvolutionChain: (id: number): Promise<EvolutionChainResponse> =>
     get<EvolutionChainResponse>(`/evolution-chain/${id}`),
+
+  getPokemonEncounters: (id: number): Promise<PokemonEncounterEntry[]> =>
+    get<PokemonEncounterEntry[]>(`/pokemon/${id}/encounters`),
 };

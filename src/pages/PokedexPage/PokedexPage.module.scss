@@ -175,6 +175,32 @@
 }
 
 // Botão "Filtros"
+// ── Cols control ──────────────────────────────────────────────────
+.colsControl {
+  display: none;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+
+  @include respond-to("md") {
+    display: flex;
+  }
+}
+
+.colsRange {
+  width: 64px;
+  accent-color: $color-primary;
+  cursor: pointer;
+}
+
+.colsValue {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $color-text-faint-light;
+  min-width: 1ch;
+  text-align: center;
+}
+
 .filterToggle {
   display: flex;
   align-items: center;
@@ -484,7 +510,7 @@
   }
 
   @include respond-to("md") {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
   }
 }
 
@@ -540,7 +566,7 @@
   bottom: -6px;
   right: $space-2;
   font-family: $font-family-display;
-  font-size: 68px;
+  font-size: var(--watermark-size, 68px);
   font-weight: $font-weight-extrabold;
   color: $color-text-dark;
   opacity: 0.06;

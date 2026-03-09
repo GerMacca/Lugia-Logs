@@ -1,8 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { pokemonService } from '../services/pokemon.service';
 import type { PokemonDetail } from '../types/pokemon.types';
 
-const PAGE_SIZE = 50;
+const TOTAL_POKEMON = 1025;
+const BATCH_SIZE = 100;
 
 function idFromUrl(url: string): number {
   const id = url.replace(/\/$/, '').split('/').pop();
@@ -33,12 +36,9 @@ export type SortBy =
 
 export interface UsePokedexResult {
   pokemon: PokemonDetail[];
-  loading: boolean;
-  loadingMore: boolean;
-  isLoadingAll: boolean;
+  loading: boolean;      // true enquanto o primeiro batch não chegou
+  loadingAll: boolean;   // true enquanto ainda há batches sendo carregados
   error: string | null;
-  hasMore: boolean;
-  loadMore: () => void;
   total: number;
   search: string;
   setSearch: (v: string) => void;
@@ -55,14 +55,11 @@ export interface UsePokedexResult {
 }
 
 export function usePokedex(): UsePokedexResult {
-  const [all, setAll]         = useState<PokemonDetail[]>([]);
-  const [offset, setOffset]   = useState(0);
-  const [total, setTotal]     = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading]         = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const loadingMoreRef                = useRef(false); // guard síncrono contra race condition
-  const [error, setError]     = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const [all, setAll]           = useState<PokemonDetail[]>([]);
+  const [loadingAll, setLoadingAll] = useState(true);
+  const [error, setError]       = useState<string | null>(null);
 
   const [search, setSearch]               = useState('');
   const [typeFilter, setTypeFilter]       = useState<string[]>([]);
@@ -71,118 +68,114 @@ export function usePokedex(): UsePokedexResult {
   const [weightFilter, setWeightFilter]   = useState<string[]>([]);
   const [sortBy, setSortBy]               = useState<SortBy>('id');
 
-  const fetchBatch = useCallback(async (batchOffset: number, append: boolean) => {
-    try {
-      const list = await pokemonService.listPokemons(PAGE_SIZE, batchOffset);
-      if (!append) setTotal(list.count);
-      setHasMore(list.next !== null);
-
-      const details = await Promise.all(
-        list.results.map(r => pokemonService.getPokemon(idFromUrl(r.url)))
-      );
-
-      setAll(prev => append ? [...prev, ...details] : details);
-    } catch {
-      setError('Não foi possível carregar os Pokémons.');
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-      loadingMoreRef.current = false;
-    }
-  }, []);
+  // ── Passo 1: buscar lista de nomes/URLs (1 request, cache eterno) ─
+  const { data: nameList, error: listError } = useQuery({
+    queryKey: ['pokemon-name-list'],
+    queryFn: () => pokemonService.listPokemons(TOTAL_POKEMON, 0),
+  });
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    fetchBatch(0, false);
-  }, [fetchBatch]);
+    if (listError) setError('Não foi possível carregar os Pokémons.');
+  }, [listError]);
 
-  const loadMore = useCallback(() => {
-    if (loadingMoreRef.current || !hasMore) return;
-    loadingMoreRef.current = true;
-    setLoadingMore(true);
-    const next = offset + PAGE_SIZE;
-    setOffset(next);
-    fetchBatch(next, true);
-  }, [hasMore, offset, fetchBatch]);
+  // ─ Passo 2: buscar detalhes em batches, populando o cache RQ 
+  useEffect(() => {
+    if (!nameList) return;
+    let cancelled = false;
 
-  const filtered = all
-    .filter(p => {
-      const q = search.toLowerCase().trim();
-      const matchesSearch = !q || p.name.toLowerCase().includes(q);
-      const matchesType =
-        typeFilter.length === 0 ||
-        p.types.some(t => typeFilter.includes(t.type.name));
-      const matchesGen =
-        genFilter.length === 0 ||
-        genFilter.includes(getGen(p.id));
-      const matchesHeight =
-        heightFilter.length === 0 ||
-        heightFilter.some(bucket => {
-          if (bucket === 'small')  return p.height <= 5;
-          if (bucket === 'medium') return p.height >= 6 && p.height <= 15;
-          return p.height >= 16; // 'large'
-        });
-      const matchesWeight =
-        weightFilter.length === 0 ||
-        weightFilter.some(bucket => {
-          if (bucket === 'light')  return p.weight <= 100;
-          if (bucket === 'medium') return p.weight >= 101 && p.weight <= 1000;
-          return p.weight >= 1001; // 'heavy'
-        });
-      return matchesSearch && matchesType && matchesGen && matchesHeight && matchesWeight;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'name':        return a.name.localeCompare(b.name);
-        case 'weight-asc':  return a.weight - b.weight;
-        case 'weight-desc': return b.weight - a.weight;
-        case 'height-asc':  return a.height - b.height;
-        case 'height-desc': return b.height - a.height;
-        default:            return a.id - b.id;
+    const fetchAll = async () => {
+      const urls = nameList.results;
+      const accumulated: PokemonDetail[] = [];
+
+      for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+        if (cancelled) return;
+
+        const batch = urls.slice(i, i + BATCH_SIZE);
+        const ids   = batch.map(r => idFromUrl(r.url));
+
+        const details = await Promise.all(
+          ids.map(id => {
+            // Reutiliza cache do React Query (ex: pokemon já visitado na detail page)
+            const cached = queryClient.getQueryData<PokemonDetail>(['pokemon', String(id)]);
+            if (cached) return Promise.resolve(cached);
+
+            return pokemonService.getPokemon(id).then(p => {
+              // Popula o cache para que a detail page seja instantânea
+              queryClient.setQueryData(['pokemon', String(id)], p);
+              return p;
+            });
+          })
+        );
+
+        if (cancelled) return;
+        accumulated.push(...details);
+        setAll([...accumulated]); // atualiza progressivamente
+      }
+
+      if (!cancelled) setLoadingAll(false);
+    };
+
+    fetchAll().catch(() => {
+      if (!cancelled) {
+        setError('Não foi possível carregar os Pokémons.');
+        setLoadingAll(false);
       }
     });
 
-  // Auto-load quando filtros ativos não encontram resultados nos dados carregados
-  // (ex: selecionar Gen 2 com só Gen 1 carregada → continua paginando até achar)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (filtered.length === 0 && hasMore && !loading && !loadingMoreRef.current && all.length > 0) {
-      loadMore();
-    }
-  }, [filtered.length, hasMore, loading, loadingMore, all.length, loadMore]);
+    return () => { cancelled = true; };
+  }, [nameList, queryClient]);
 
-  // Auto-load todos os dados quando ordenação não-padrão está ativa
-  // (garante que a lista seja completamente ordenada antes de exibir)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (sortBy !== 'id' && hasMore && !loading && !loadingMoreRef.current) {
-      loadMore();
-    }
-  }, [sortBy, hasMore, loading, loadingMore, loadMore]);
-
-  const isLoadingAll = sortBy !== 'id' && hasMore;
+  // ── Filtros + ordenação ───────────────────────────────────────────
+  const filtered = useMemo(() => {
+    return all
+      .filter(p => {
+        const q = search.toLowerCase().trim();
+        const matchesSearch = !q || p.name.toLowerCase().includes(q);
+        const matchesType =
+          typeFilter.length === 0 ||
+          p.types.some(t => typeFilter.includes(t.type.name));
+        const matchesGen =
+          genFilter.length === 0 ||
+          genFilter.includes(getGen(p.id));
+        const matchesHeight =
+          heightFilter.length === 0 ||
+          heightFilter.some(bucket => {
+            if (bucket === 'small')  return p.height <= 5;
+            if (bucket === 'medium') return p.height >= 6 && p.height <= 15;
+            return p.height >= 16;
+          });
+        const matchesWeight =
+          weightFilter.length === 0 ||
+          weightFilter.some(bucket => {
+            if (bucket === 'light')  return p.weight <= 100;
+            if (bucket === 'medium') return p.weight >= 101 && p.weight <= 1000;
+            return p.weight >= 1001;
+          });
+        return matchesSearch && matchesType && matchesGen && matchesHeight && matchesWeight;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case 'name':        return a.name.localeCompare(b.name);
+          case 'weight-asc':  return a.weight - b.weight;
+          case 'weight-desc': return b.weight - a.weight;
+          case 'height-asc':  return a.height - b.height;
+          case 'height-desc': return b.height - a.height;
+          default:            return a.id - b.id;
+        }
+      });
+  }, [all, search, typeFilter, genFilter, heightFilter, weightFilter, sortBy]);
 
   return {
     pokemon: filtered,
-    loading,
-    loadingMore,
-    isLoadingAll,
+    loading: all.length === 0 && loadingAll,
+    loadingAll,
     error,
-    hasMore,       // nunca desabilitado — scroll continua carregando mesmo com filtro
-    loadMore,
-    total,
-    search,
-    setSearch,
-    typeFilter,
-    setTypeFilter,
-    genFilter,
-    setGenFilter,
-    heightFilter,
-    setHeightFilter,
-    weightFilter,
-    setWeightFilter,
-    sortBy,
-    setSortBy,
+    total: nameList?.results.length ?? 0,
+    search,       setSearch,
+    typeFilter,   setTypeFilter,
+    genFilter,    setGenFilter,
+    heightFilter, setHeightFilter,
+    weightFilter, setWeightFilter,
+    sortBy,       setSortBy,
   };
 }

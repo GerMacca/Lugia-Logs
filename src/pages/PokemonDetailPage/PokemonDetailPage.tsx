@@ -1,9 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+
 import MainLayout from '../../layouts/MainLayout/MainLayout';
 import { usePokemonDetail } from '../../hooks/usePokemonDetail';
 import type { EvoPath, EvoNode, AbilityTranslation, TypeEffectiveness } from '../../hooks/usePokemonDetail';
 import type { PokemonDetail, PokemonStat, EvolutionDetail } from '../../types/pokemon.types';
+import { pokemonService } from '../../services/pokemon.service';
+
 import styles from './PokemonDetailPage.module.scss';
 
 const MAX_POKEMON = 1025;
@@ -20,34 +24,101 @@ function hexToAlpha(hex: string, alpha: number): string {
 
 // ── Type data ─────────────────────────────────────────────────
 const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
-  normal:   { bg: '#9a9a6e', text: '#fff' },
-  fire:     { bg: '#f08030', text: '#fff' },
-  water:    { bg: '#6890f0', text: '#fff' },
+  normal: { bg: '#9a9a6e', text: '#fff' },
+  fire: { bg: '#f08030', text: '#fff' },
+  water: { bg: '#6890f0', text: '#fff' },
   electric: { bg: '#f8d030', text: '#1a1210' },
-  grass:    { bg: '#78c850', text: '#fff' },
-  ice:      { bg: '#98d8d8', text: '#1a2a2a' },
+  grass: { bg: '#78c850', text: '#fff' },
+  ice: { bg: '#98d8d8', text: '#1a2a2a' },
   fighting: { bg: '#c03028', text: '#fff' },
-  poison:   { bg: '#a040a0', text: '#fff' },
-  ground:   { bg: '#e0c068', text: '#1a1a08' },
-  flying:   { bg: '#a890f0', text: '#fff' },
-  psychic:  { bg: '#f85888', text: '#fff' },
-  bug:      { bg: '#a8b820', text: '#fff' },
-  rock:     { bg: '#b8a038', text: '#fff' },
-  ghost:    { bg: '#705898', text: '#fff' },
-  dragon:   { bg: '#7038f8', text: '#fff' },
-  dark:     { bg: '#705848', text: '#fff' },
-  steel:    { bg: '#b8b8d0', text: '#1a1a28' },
-  fairy:    { bg: '#ee99ac', text: '#1a0810' },
+  poison: { bg: '#a040a0', text: '#fff' },
+  ground: { bg: '#e0c068', text: '#1a1a08' },
+  flying: { bg: '#a890f0', text: '#fff' },
+  psychic: { bg: '#f85888', text: '#fff' },
+  bug: { bg: '#a8b820', text: '#fff' },
+  rock: { bg: '#b8a038', text: '#fff' },
+  ghost: { bg: '#705898', text: '#fff' },
+  dragon: { bg: '#7038f8', text: '#fff' },
+  dark: { bg: '#705848', text: '#fff' },
+  steel: { bg: '#b8b8d0', text: '#1a1a28' },
+  fairy: { bg: '#ee99ac', text: '#1a0810' },
 };
 
 const TYPE_NAMES_PT: Record<string, string> = {
   normal: 'Normal', fire: 'Fogo', water: 'Água',
   electric: 'Elétrico', grass: 'Planta', ice: 'Gelo',
-  fighting: 'Lutador', poison: 'Venenoso', ground: 'Terra',
+  fighting: 'Lutador', poison: 'Venenoso', ground: 'Terrestre',
   flying: 'Voador', psychic: 'Psíquico', bug: 'Inseto',
   rock: 'Pedra', ghost: 'Fantasma', dragon: 'Dragão',
   dark: 'Sombrio', steel: 'Aço', fairy: 'Fada',
 };
+
+// ── Cover Pokémon ─────────────────────────────────────────────
+const COVER_POKEMON: Record<number, string[]> = {
+  3: ['Green (JP)', 'LeafGreen'],
+  6: ['Red', 'FireRed'],
+  9: ['Blue'],
+  25: ['Yellow', "Let's Go, Pikachu!"],
+  133: ["Let's Go, Eevee!"],
+  245: ['Crystal'],
+  249: ['Silver', 'SoulSilver'],
+  250: ['Gold', 'HeartGold'],
+  382: ['Sapphire', 'Alpha Sapphire'],
+  383: ['Ruby', 'Omega Ruby'],
+  384: ['Emerald'],
+  483: ['Diamond', 'Brilliant Diamond'],
+  484: ['Pearl', 'Shining Pearl'],
+  487: ['Platinum'],
+  493: ['Legends: Arceus'],
+  643: ['Black'],
+  644: ['White'],
+  646: ['Black 2', 'White 2'],
+  716: ['X'],
+  717: ['Y'],
+  791: ['Sun'],
+  792: ['Moon'],
+  800: ['Ultra Sun', 'Ultra Moon'],
+  888: ['Sword'],
+  889: ['Shield'],
+  1007: ['Scarlet'],
+  1008: ['Violet'],
+};
+
+// ── Encounter data ────────────────────────────────────────────
+const VERSION_DISPLAY: Record<string, string> = {
+  red: 'Red', blue: 'Blue', yellow: 'Yellow',
+  gold: 'Gold', silver: 'Silver', crystal: 'Crystal',
+  ruby: 'Ruby', sapphire: 'Sapphire', emerald: 'Emerald',
+  firered: 'FireRed', leafgreen: 'LeafGreen',
+  diamond: 'Diamond', pearl: 'Pearl', platinum: 'Platinum',
+  heartgold: 'HeartGold', soulsilver: 'SoulSilver',
+  black: 'Black', white: 'White',
+  'black-2': 'Black 2', 'white-2': 'White 2',
+  x: 'X', y: 'Y',
+  'omega-ruby': 'Omega Ruby', 'alpha-sapphire': 'Alpha Sapphire',
+  sun: 'Sun', moon: 'Moon',
+  'ultra-sun': 'Ultra Sun', 'ultra-moon': 'Ultra Moon',
+  sword: 'Sword', shield: 'Shield',
+  'brilliant-diamond': 'Brilliant Diamond', 'shining-pearl': 'Shining Pearl',
+  'legends-arceus': 'Legends: Arceus',
+  scarlet: 'Scarlet', violet: 'Violet',
+  colosseum: 'Colosseum', xd: 'XD',
+  'lets-go-pikachu': "Let's Go, Pikachu!", 'lets-go-eevee': "Let's Go, Eevee!",
+};
+
+const METHOD_PT: Record<string, string> = {
+  walk: 'Caminhando', surf: 'Surfando',
+  'old-rod': 'Vara Velha', 'good-rod': 'Vara Boa', 'super-rod': 'Vara Super',
+  'rock-smash': 'Quebrar Rocha', headbutt: 'Cabeçada',
+  'only-one': 'Único', pokeradar: 'PokéRadar',
+  'dark-grass': 'Grama Escura', gift: 'Presente',
+  'specific-location': 'Local Específico', 'tall-grass': 'Grama Alta',
+  fishing: 'Pescando',
+};
+
+function formatArea(name: string): string {
+  return name.replace(/-area$/, '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
 
 // ── Stat data ─────────────────────────────────────────────────
 const STAT_PT: Record<string, string> = {
@@ -60,10 +131,10 @@ const STAT_PT: Record<string, string> = {
 };
 
 function getStatColor(value: number): string {
-  if (value < 30)  return '#e74c3c';
-  if (value < 50)  return '#e67e22';
-  if (value < 70)  return '#f1c40f';
-  if (value < 90)  return '#a8d548';
+  if (value < 30) return '#e74c3c';
+  if (value < 50) return '#e67e22';
+  if (value < 70) return '#f1c40f';
+  if (value < 90) return '#a8d548';
   if (value < 110) return '#2ecc71';
   return '#17a347';
 }
@@ -73,13 +144,13 @@ function getEvoLabel(details: EvolutionDetail[]): string {
   if (details.length === 0) return '';
   const d = details[0];
   if (d.trigger.name === 'level-up') {
-    if (d.min_level)     return `Lv. ${d.min_level}`;
+    if (d.min_level) return `Lv. ${d.min_level}`;
     if (d.min_happiness) return 'Amizade';
     if (d.min_affection) return 'Afeição';
-    if (d.time_of_day === 'day')   return 'Dia';
+    if (d.time_of_day === 'day') return 'Dia';
     if (d.time_of_day === 'night') return 'Noite';
-    if (d.known_move)    return 'Movimento';
-    if (d.location)      return 'Local';
+    if (d.known_move) return 'Movimento';
+    if (d.location) return 'Local';
     return 'Nível acima';
   }
   if (d.trigger.name === 'use-item') {
@@ -121,14 +192,14 @@ function StatBar({ stat, animate }: { stat: PokemonStat; animate: boolean }) {
       return;
     }
     startRef.current = performance.now();
-    const target    = stat.base_stat;
+    const target = stat.base_stat;
     const targetPct = Math.min(100, (target / 255) * 100);
-    const duration  = 900;
+    const duration = 900;
 
     const tick = (now: number) => {
       const elapsed = now - startRef.current;
-      const t       = Math.min(elapsed / duration, 1);
-      const eased   = 1 - Math.pow(1 - t, 3);
+      const t = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
       setDisplayVal(Math.round(target * eased));
       setDisplayPct(targetPct * eased);
       if (t < 1) frameRef.current = requestAnimationFrame(tick);
@@ -225,11 +296,11 @@ function AbilitiesSection({ abilities }: { abilities: AbilityTranslation[] | nul
 // ── Type Effectiveness Section ────────────────────────────────
 function EffectivenessSection({ te }: { te: TypeEffectiveness }) {
   const groups = [
-    { label: '4×',   types: te.quadWeak,      class: styles.mult4x },
-    { label: '2×',   types: te.weak,           class: styles.mult2x },
-    { label: '½×',   types: te.resistant,      class: styles.mult05x },
-    { label: '¼×',   types: te.quadResistant,  class: styles.mult025x },
-    { label: '0×',   types: te.immune,         class: styles.mult0x },
+    { label: '4×', types: te.quadWeak, class: styles.mult4x },
+    { label: '2×', types: te.weak, class: styles.mult2x },
+    { label: '½×', types: te.resistant, class: styles.mult05x },
+    { label: '¼×', types: te.quadResistant, class: styles.mult025x },
+    { label: '0×', types: te.immune, class: styles.mult0x },
   ].filter(g => g.types.length > 0);
 
   if (groups.length === 0) return null;
@@ -328,13 +399,23 @@ function EvolutionSection({ evoPaths, currentId }: { evoPaths: EvoPath[] | null;
 }
 
 // ── Forms Section ─────────────────────────────────────────────
-function FormsSection({ forms }: { forms: PokemonDetail[] }) {
-  if (forms.length === 0) return null;
+function FormsSection({ forms, defaultId }: { forms: PokemonDetail[]; defaultId?: number }) {
+  if (forms.length === 0 && !defaultId) return null;
 
   return (
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>Formas Alternativas</h2>
       <div className={styles.formsGrid}>
+        {defaultId && (
+          <Link
+            to={`/pokedex/${defaultId}`}
+            className={`${styles.formCard} ${styles.formCardDefault}`}
+            style={{ '--form-color': '#485a95' } as React.CSSProperties}
+          >
+            <span className={styles.formNormalIcon} aria-hidden="true">↩</span>
+            <span className={styles.formName}>Forma Normal</span>
+          </Link>
+        )}
         {forms.map(form => {
           const art = form.sprites.other['official-artwork'].front_default ?? form.sprites.front_default;
           const primaryType = form.types[0]?.type.name ?? 'normal';
@@ -357,6 +438,100 @@ function FormsSection({ forms }: { forms: PokemonDetail[] }) {
           );
         })}
       </div>
+    </section>
+  );
+}
+
+// ── Locations Section ─────────────────────────────────────────
+function LocationsSection({ pokemonId }: { pokemonId: number }) {
+  const [inView, setInView] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
+      { rootMargin: '300px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const { data: rawEncounters, isLoading } = useQuery({
+    queryKey: ['encounters', pokemonId],
+    queryFn: () => pokemonService.getPokemonEncounters(pokemonId),
+    enabled: inView,
+    staleTime: Infinity,
+  });
+
+  const byVersion = useMemo(() => {
+    if (!rawEncounters) return null;
+    const map = new Map<string, Array<{ area: string; method: string; minLv: number; maxLv: number; chance: number }>>();
+    for (const entry of rawEncounters) {
+      const area = formatArea(entry.location_area.name);
+      for (const vd of entry.version_details) {
+        const ver = vd.version.name;
+        if (!map.has(ver)) map.set(ver, []);
+        const best = vd.encounter_details.reduce(
+          (a, b) => a.chance >= b.chance ? a : b,
+          vd.encounter_details[0]
+        );
+        if (best) {
+          map.get(ver)!.push({
+            area,
+            method: METHOD_PT[best.method.name] ?? capitalize(best.method.name),
+            minLv: best.min_level,
+            maxLv: best.max_level,
+            chance: vd.max_chance,
+          });
+        }
+      }
+    }
+    return map;
+  }, [rawEncounters]);
+
+  return (
+    <section ref={ref} className={styles.section}>
+      <h2 className={styles.sectionTitle}>Localizações</h2>
+
+      {(!inView || isLoading) && (
+        <div className={styles.locLoadingGrid}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className={styles.skPulse} style={{ height: 100 }} />
+          ))}
+        </div>
+      )}
+
+      {inView && !isLoading && (!byVersion || byVersion.size === 0) && (
+        <p className={styles.noLocMsg}>
+          Este Pokémon não é encontrado em estado selvagem.
+        </p>
+      )}
+
+      {inView && !isLoading && byVersion && byVersion.size > 0 && (
+        <div className={styles.locGrid}>
+          {[...byVersion.entries()].map(([ver, locs]) => (
+            <div key={ver} className={styles.locGame}>
+              <div className={styles.locGameHeader}>
+                Pokémon {VERSION_DISPLAY[ver] ?? capitalize(ver)}
+              </div>
+              <div className={styles.locEntries}>
+                {locs.map((loc, i) => (
+                  <div key={i} className={styles.locEntry}>
+                    <span className={styles.locArea}>{loc.area}</span>
+                    <span className={styles.locMethod}>{loc.method}</span>
+                    <span className={styles.locLevel}>
+                      Lv.&nbsp;{loc.minLv}{loc.maxLv !== loc.minLv ? `–${loc.maxLv}` : ''}
+                    </span>
+                    <span className={styles.locChance}>{loc.chance}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -391,13 +566,33 @@ const PokemonDetailPage: React.FC = () => {
   const { pokemon, species, abilities, evoPaths, alternateForms, typeEffectiveness, loading, error } =
     usePokemonDetail(id);
 
-  const [shiny, setShiny]   = useState(false);
+  const [shiny, setShiny] = useState(false);
+  const [displayedSrc, setDisplayedSrc] = useState<string | null>(null);
 
-  // Reset toggles on pokemon change
+  // Scroll to top + reset toggles on pokemon change
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setShiny(false);
+    setDisplayedSrc(null);
   }, [id]);
 
+  // Artwork source — computed before early returns so hooks order stays estável
+  const artworkSrc = pokemon
+    ? (shiny
+      ? pokemon.sprites.other['official-artwork'].front_shiny
+      : pokemon.sprites.other['official-artwork'].front_default)
+    : null;
+
+  // Preload da nova imagem antes de trocar — evita flicker no toggle shiny
+  useEffect(() => {
+    if (!artworkSrc) { setDisplayedSrc(null); return; }
+    if (displayedSrc === artworkSrc) return;
+    const img = new Image();
+    img.onload = () => setDisplayedSrc(artworkSrc);
+    img.src = artworkSrc;
+  }, [artworkSrc]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Early returns (AFTER todos os hooks) ─────────────────────
   if (loading) return <MainLayout><PageSkeleton /></MainLayout>;
 
   if (error || !pokemon || !species) {
@@ -414,11 +609,6 @@ const PokemonDetailPage: React.FC = () => {
   // ── Artwork selection ────────────────────────────────────────
   const hasShiny = pokemon.sprites.other['official-artwork'].front_shiny;
 
-  let artworkSrc: string | null;
-  artworkSrc = shiny
-      ? pokemon.sprites.other['official-artwork'].front_shiny
-      : pokemon.sprites.other['official-artwork'].front_default;
-
   // ── Type color for glow ──────────────────────────────────────
   const primaryType = pokemon.types[0]?.type.name ?? 'normal';
   const typeColorBg = TYPE_COLORS[primaryType]?.bg ?? '#485a95';
@@ -433,7 +623,7 @@ const PokemonDetailPage: React.FC = () => {
     .find(e => e.language.name === 'pt-br')
     ?? [...species.flavor_text_entries].reverse().find(e => e.language.name === 'en');
   const flavorText = flavorEntry?.flavor_text
-    .replace(/[\f\n\r\u000C]/g, ' ')
+    .replace(/[\f\n\r]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim() ?? '';
 
@@ -442,7 +632,8 @@ const PokemonDetailPage: React.FC = () => {
 
   const displayId = species.id;
   const isLegendary = species.is_legendary;
-  const isMythical  = species.is_mythical;
+  const isMythical = species.is_mythical;
+  const coverGames = COVER_POKEMON[displayId] ?? null;
 
   return (
     <MainLayout>
@@ -471,7 +662,7 @@ const PokemonDetailPage: React.FC = () => {
             </Link>
           )}
         </div>
-        
+
         <div className={styles.hero}>
           <div className={styles.heroArtwork}>
             <div className={styles.artworkWrap}>
@@ -479,10 +670,9 @@ const PokemonDetailPage: React.FC = () => {
               <div className={styles.artworkWatermark} aria-hidden="true">
                 #{String(displayId).padStart(4, '0')}
               </div>
-              {artworkSrc ? (
+              {displayedSrc ? (
                 <img
-                  key={`${id}-${shiny}`}
-                  src={artworkSrc}
+                  src={displayedSrc}
                   alt={capitalize(pokemon.name)}
                   className={styles.artworkImg}
                   draggable={false}
@@ -514,6 +704,9 @@ const PokemonDetailPage: React.FC = () => {
                   {isMythical ? 'Mítico' : 'Lendário'}
                 </span>
               )}
+              {coverGames && (
+                <span className={styles.coverBadge}>Mascote</span>
+              )}
             </div>
 
             <h1 className={styles.heroName}>{capitalize(pokemon.name)}</h1>
@@ -523,6 +716,17 @@ const PokemonDetailPage: React.FC = () => {
             <div className={styles.heroTypes}>
               {pokemon.types.map(({ type }) => <TypeBadge key={type.name} typeName={type.name} />)}
             </div>
+
+            {coverGames && (
+              <div className={styles.coverRow}>
+                <span className={styles.coverRowLabel}>Capa em</span>
+                <div className={styles.coverChips}>
+                  {coverGames.map(g => (
+                    <span key={g} className={styles.coverChip}>Pokémon {g}</span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {flavorText && <p className={styles.heroFlavor}>{flavorText}</p>}
 
@@ -553,9 +757,13 @@ const PokemonDetailPage: React.FC = () => {
           <AbilitiesSection abilities={abilities} />
           <EffectivenessSection te={typeEffectiveness} />
           <EvolutionSection evoPaths={evoPaths} currentId={pokemon.id} />
-          {alternateForms !== null && alternateForms.length > 0 && (
-            <FormsSection forms={alternateForms} />
+          {alternateForms !== null && (alternateForms.length > 0 || pokemon.id !== species.id) && (
+            <FormsSection
+              forms={alternateForms}
+              defaultId={pokemon.id !== species.id ? species.id : undefined}
+            />
           )}
+          <LocationsSection pokemonId={displayId} />
         </div>
 
       </div>

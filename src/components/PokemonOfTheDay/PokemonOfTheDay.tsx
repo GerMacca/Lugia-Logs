@@ -39,7 +39,7 @@ const TYPE_NAMES_PT: Record<string, string> = {
   ice: 'Gelo',
   fighting: 'Lutador',
   poison: 'Venenoso',
-  ground: 'Terra',
+  ground: 'Terrestre',
   flying: 'Voador',
   psychic: 'Psíquico',
   bug: 'Inseto',

@@ -321,6 +321,51 @@
   letter-spacing: 0.06em;
 }
 
+.coverBadge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.coverRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-5;
+}
+
+.coverRowLabel {
+  font-size: $font-size-xs;
+  color: $color-text-faint-light;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.coverChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.coverChip {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  padding: 3px $space-3;
+  border-radius: $radius-full;
+  background: rgba($color-primary, 0.06);
+  border: 1px solid rgba($color-primary, 0.2);
+  color: $color-primary;
+}
+
 .heroName {
   font-family: $font-family-display;
   font-size: clamp($font-size-3xl, 6vw, $font-size-5xl);
@@ -634,7 +679,7 @@
   align-items: center;
   gap: $space-1;
   padding: $space-3;
-  min-width: 80px;
+  min-width: 135px;
   background: $color-white;
   border: 1px solid rgba(0, 0, 0, 0.07);
   border-radius: $radius-xl;
@@ -732,6 +777,23 @@
   }
 }
 
+.formCardDefault {
+  justify-content: center;
+  border-style: dashed;
+  border-color: rgba($color-primary, 0.3);
+  color: $color-primary;
+
+  &:hover {
+    border-color: $color-primary;
+    border-style: dashed;
+  }
+}
+
+.formNormalIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
 .formSprite {
   width: 80px;
   height: 80px;
@@ -752,4 +814,98 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 3px;
+}
+
+// ── Locations ─────────────────────────────────────────────────
+.locLoadingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3;
+
+  @include respond-to("md") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.noLocMsg {
+  color: $color-text-sub;
+  font-size: $font-size-sm;
+}
+
+.locGrid {
+  columns: 1;
+  column-gap: $space-4;
+
+  @include respond-to("md") {
+    columns: 2;
+  }
+
+  @include respond-to("lg") {
+    columns: 3;
+  }
+}
+
+.locGame {
+  background: $color-white;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  break-inside: avoid;
+  margin-bottom: $space-4;
+}
+
+.locGameHeader {
+  padding: $space-3 $space-4;
+  background: rgba($color-primary, 0.05);
+  border-bottom: 1px solid rgba($color-primary, 0.08);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.locEntries {
+  // semantic wrapper
+}
+
+.locEntry {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 $space-4;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: $font-size-xs;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.locArea {
+  color: $color-text-dark;
+  font-weight: $font-weight-medium;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.locMethod {
+  color: $color-text-sub;
+  white-space: nowrap;
+}
+
+.locLevel {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.locChance {
+  color: $color-text-faint-light;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+  text-align: right;
 }
