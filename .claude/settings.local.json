@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install @tanstack/react-query)"
+      "Bash(npm install @tanstack/react-query)",
+      "Bash(curl -L \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/other/official-artwork/54.png\" -o \"e:/LugiaLogs/public/psyduck.png\")",
+      "Bash(curl -sI \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/other/official-artwork/54.png\")",
+      "Bash(curl -sI \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png\")"
     ]
   }
 }

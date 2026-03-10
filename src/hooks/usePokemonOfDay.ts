@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
+
 import { pokemonService } from '../services/pokemon.service';
 import type { PokemonDetail } from '../types/pokemon.types';
 
 const POKEMON_COUNT = 1010; // mesmo valor de usePokemonOfTheDay
 
 function getTodayId(): number {
-  // Mesma fórmula de usePokemonOfTheDay — garante o mesmo Pokémon em todas as páginas
   const d = new Date();
   const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-  return (seed % POKEMON_COUNT) + 1;
+  // Knuth multiplicative hash — non-sequential for consecutive days
+  const hash = Math.imul(seed, 0x9e3779b1) >>> 0;
+  return (hash % POKEMON_COUNT) + 1;
 }
 
 export function usePokemonOfDay() {

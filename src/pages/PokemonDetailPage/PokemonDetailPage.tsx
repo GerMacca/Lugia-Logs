@@ -44,15 +44,6 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
   fairy: { bg: '#ee99ac', text: '#1a0810' },
 };
 
-const TYPE_NAMES_PT: Record<string, string> = {
-  normal: 'Normal', fire: 'Fogo', water: 'Água',
-  electric: 'Elétrico', grass: 'Planta', ice: 'Gelo',
-  fighting: 'Lutador', poison: 'Venenoso', ground: 'Terrestre',
-  flying: 'Voador', psychic: 'Psíquico', bug: 'Inseto',
-  rock: 'Pedra', ghost: 'Fantasma', dragon: 'Dragão',
-  dark: 'Sombrio', steel: 'Aço', fairy: 'Fada',
-};
-
 // ── Cover Pokémon ─────────────────────────────────────────────
 const COVER_POKEMON: Record<number, string[]> = {
   3: ['Green (JP)', 'LeafGreen'],
@@ -106,29 +97,13 @@ const VERSION_DISPLAY: Record<string, string> = {
   'lets-go-pikachu': "Let's Go, Pikachu!", 'lets-go-eevee': "Let's Go, Eevee!",
 };
 
-const METHOD_PT: Record<string, string> = {
-  walk: 'Caminhando', surf: 'Surfando',
-  'old-rod': 'Vara Velha', 'good-rod': 'Vara Boa', 'super-rod': 'Vara Super',
-  'rock-smash': 'Quebrar Rocha', headbutt: 'Cabeçada',
-  'only-one': 'Único', pokeradar: 'PokéRadar',
-  'dark-grass': 'Grama Escura', gift: 'Presente',
-  'specific-location': 'Local Específico', 'tall-grass': 'Grama Alta',
-  fishing: 'Pescando',
-};
-
 function formatArea(name: string): string {
   return name.replace(/-area$/, '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-// ── Stat data ─────────────────────────────────────────────────
-const STAT_PT: Record<string, string> = {
-  hp: 'HP',
-  attack: 'Ataque',
-  defense: 'Defesa',
-  'special-attack': 'Atq. Especial',
-  'special-defense': 'Def. Especial',
-  speed: 'Velocidade',
-};
+function statLabel(name: string): string {
+  return name === 'hp' ? 'HP' : capitalize(name);
+}
 
 function getStatColor(value: number): string {
   if (value < 30) return '#e74c3c';
@@ -145,20 +120,20 @@ function getEvoLabel(details: EvolutionDetail[]): string {
   const d = details[0];
   if (d.trigger.name === 'level-up') {
     if (d.min_level) return `Lv. ${d.min_level}`;
-    if (d.min_happiness) return 'Amizade';
-    if (d.min_affection) return 'Afeição';
-    if (d.time_of_day === 'day') return 'Dia';
-    if (d.time_of_day === 'night') return 'Noite';
-    if (d.known_move) return 'Movimento';
-    if (d.location) return 'Local';
-    return 'Nível acima';
+    if (d.min_happiness) return 'Friendship';
+    if (d.min_affection) return 'Affection';
+    if (d.time_of_day === 'day') return 'Daytime';
+    if (d.time_of_day === 'night') return 'Nighttime';
+    if (d.known_move) return 'Move known';
+    if (d.location) return 'Location';
+    return 'Level up';
   }
   if (d.trigger.name === 'use-item') {
     return capitalize(d.item?.name ?? 'item');
   }
   if (d.trigger.name === 'trade') {
-    if (d.held_item) return 'Troca c/ item';
-    return 'Troca';
+    if (d.held_item) return 'Trade w/ item';
+    return 'Trade';
   }
   if (d.trigger.name === 'shed') return 'Lv. 20';
   return '—';
@@ -172,7 +147,7 @@ function TypeBadge({ typeName, size = 'md' }: { typeName: string; size?: 'sm' | 
       className={`${styles.typeBadge} ${size === 'sm' ? styles.typeBadgeSm : ''}`}
       style={{ background: c.bg, color: c.text }}
     >
-      {TYPE_NAMES_PT[typeName] ?? capitalize(typeName)}
+      {capitalize(typeName)}
     </span>
   );
 }
@@ -210,7 +185,7 @@ function StatBar({ stat, animate }: { stat: PokemonStat; animate: boolean }) {
 
   return (
     <div className={styles.statRow}>
-      <span className={styles.statName}>{STAT_PT[stat.stat.name] ?? stat.stat.name}</span>
+      <span className={styles.statName}>{statLabel(stat.stat.name)}</span>
       <span className={styles.statNum}>{displayVal}</span>
       <div className={styles.statBarTrack}>
         <div
@@ -243,7 +218,7 @@ function StatsSection({ stats }: { stats: PokemonStat[] }) {
 
   return (
     <section ref={ref} className={styles.section}>
-      <h2 className={styles.sectionTitle}>Stats Base</h2>
+      <h2 className={styles.sectionTitle}>Base Stats</h2>
       <div className={styles.statsGrid}>
         {stats.map(s => <StatBar key={s.stat.name} stat={s} animate={animate} />)}
         <div className={styles.statRow}>
@@ -269,7 +244,7 @@ function StatsSection({ stats }: { stats: PokemonStat[] }) {
 function AbilitiesSection({ abilities }: { abilities: AbilityTranslation[] | null }) {
   return (
     <section className={styles.section}>
-      <h2 className={styles.sectionTitle}>Habilidades</h2>
+      <h2 className={styles.sectionTitle}>Abilities</h2>
       {abilities === null ? (
         <div className={styles.abilityGrid}>
           {[1, 2].map(i => <div key={i} className={`${styles.abilityCard} ${styles.skPulse}`} style={{ height: 72 }} />)}
@@ -280,7 +255,7 @@ function AbilitiesSection({ abilities }: { abilities: AbilityTranslation[] | nul
             <div key={a.slug} className={styles.abilityCard}>
               <div className={styles.abilityHead}>
                 <span className={styles.abilityName}>{a.label}</span>
-                {a.is_hidden && <span className={styles.abilityHiddenBadge}>Oculta</span>}
+                {a.is_hidden && <span className={styles.abilityHiddenBadge}>Hidden</span>}
               </div>
               {a.description && (
                 <p className={styles.abilityDesc}>{a.description}</p>
@@ -307,7 +282,7 @@ function EffectivenessSection({ te }: { te: TypeEffectiveness }) {
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.sectionTitle}>Fraquezas e Resistências</h2>
+      <h2 className={styles.sectionTitle}>Weakness and Resistances</h2>
       <div className={styles.effectivenessGroups}>
         {groups.map(g => (
           <div key={g.label} className={styles.effectRow}>
@@ -352,7 +327,7 @@ function EvolutionSection({ evoPaths, currentId }: { evoPaths: EvoPath[] | null;
   if (evoPaths === null) {
     return (
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Cadeia Evolutiva</h2>
+        <h2 className={styles.sectionTitle}>Evolution Chain</h2>
         <div className={`${styles.evoLoadingRow} ${styles.skPulse}`} />
       </section>
     );
@@ -364,8 +339,8 @@ function EvolutionSection({ evoPaths, currentId }: { evoPaths: EvoPath[] | null;
   if (uniqueIds.size <= 1) {
     return (
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Cadeia Evolutiva</h2>
-        <p className={styles.noEvoMsg}>Este Pokémon não evolui.</p>
+        <h2 className={styles.sectionTitle}>Evolution Chain</h2>
+        <p className={styles.noEvoMsg}>This Pokémon does not evolve.</p>
       </section>
     );
   }
@@ -404,7 +379,7 @@ function FormsSection({ forms, defaultId }: { forms: PokemonDetail[]; defaultId?
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.sectionTitle}>Formas Alternativas</h2>
+      <h2 className={styles.sectionTitle}>Alternate Forms</h2>
       <div className={styles.formsGrid}>
         {defaultId && (
           <Link
@@ -413,7 +388,7 @@ function FormsSection({ forms, defaultId }: { forms: PokemonDetail[]; defaultId?
             style={{ '--form-color': '#485a95' } as React.CSSProperties}
           >
             <span className={styles.formNormalIcon} aria-hidden="true">↩</span>
-            <span className={styles.formName}>Forma Normal</span>
+            <span className={styles.formName}>Default Form</span>
           </Link>
         )}
         {forms.map(form => {
@@ -480,7 +455,7 @@ function LocationsSection({ pokemonId }: { pokemonId: number }) {
         if (best) {
           map.get(ver)!.push({
             area,
-            method: METHOD_PT[best.method.name] ?? capitalize(best.method.name),
+            method: capitalize(best.method.name),
             minLv: best.min_level,
             maxLv: best.max_level,
             chance: vd.max_chance,
@@ -493,7 +468,7 @@ function LocationsSection({ pokemonId }: { pokemonId: number }) {
 
   return (
     <section ref={ref} className={styles.section}>
-      <h2 className={styles.sectionTitle}>Localizações</h2>
+      <h2 className={styles.sectionTitle}>Spawn points</h2>
 
       {(!inView || isLoading) && (
         <div className={styles.locLoadingGrid}>
@@ -505,7 +480,7 @@ function LocationsSection({ pokemonId }: { pokemonId: number }) {
 
       {inView && !isLoading && (!byVersion || byVersion.size === 0) && (
         <p className={styles.noLocMsg}>
-          Este Pokémon não é encontrado em estado selvagem.
+          This Pokémon is not found in the wild.
         </p>
       )}
 
@@ -599,8 +574,8 @@ const PokemonDetailPage: React.FC = () => {
     return (
       <MainLayout>
         <div className={styles.errorPage}>
-          <p>{error ?? 'Pokémon não encontrado.'}</p>
-          <Link to="/pokedex" className={styles.backLink}>← Voltar à Pokédex</Link>
+          <p>{error ?? 'Pokémon not found.'}</p>
+          <Link to="/pokedex" className={styles.backLink}>← Back to Pokédex</Link>
         </div>
       </MainLayout>
     );
@@ -614,21 +589,20 @@ const PokemonDetailPage: React.FC = () => {
   const typeColorBg = TYPE_COLORS[primaryType]?.bg ?? '#485a95';
 
   // ── Species info ─────────────────────────────────────────────
-  const genusEntry = species.genera.find(g => g.language.name === 'pt-br')
-    ?? species.genera.find(g => g.language.name === 'en');
+  const genusEntry = species.genera.find(g => g.language.name === 'en')
+    ?? species.genera.find(g => g.language.name === 'pt-br');
   const genus = genusEntry?.genus ?? '';
 
   const flavorEntry = [...species.flavor_text_entries]
     .reverse()
-    .find(e => e.language.name === 'pt-br')
-    ?? [...species.flavor_text_entries].reverse().find(e => e.language.name === 'en');
+    .find(e => e.language.name === 'en');
   const flavorText = flavorEntry?.flavor_text
     .replace(/[\f\n\r]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim() ?? '';
 
-  const heightM = (pokemon.height / 10).toFixed(1).replace('.', ',');
-  const weightKg = (pokemon.weight / 10).toFixed(1).replace('.', ',');
+  const heightM = (pokemon.height / 10).toFixed(1);
+  const weightKg = (pokemon.weight / 10).toFixed(1);
 
   const displayId = species.id;
   const isLegendary = species.is_legendary;
@@ -701,11 +675,11 @@ const PokemonDetailPage: React.FC = () => {
               <span className={styles.heroNumber}>#{String(displayId).padStart(4, '0')}</span>
               {(isLegendary || isMythical) && (
                 <span className={styles.legendaryBadge}>
-                  {isMythical ? 'Mítico' : 'Lendário'}
+                  {isMythical ? 'Mythical' : 'Legendary'}
                 </span>
               )}
               {coverGames && (
-                <span className={styles.coverBadge}>Mascote</span>
+                <span className={styles.coverBadge}>Mascot</span>
               )}
             </div>
 
@@ -719,7 +693,7 @@ const PokemonDetailPage: React.FC = () => {
 
             {coverGames && (
               <div className={styles.coverRow}>
-                <span className={styles.coverRowLabel}>Capa em</span>
+                <span className={styles.coverRowLabel}>Cover in</span>
                 <div className={styles.coverChips}>
                   {coverGames.map(g => (
                     <span key={g} className={styles.coverChip}>Pokémon {g}</span>
@@ -732,19 +706,19 @@ const PokemonDetailPage: React.FC = () => {
 
             <div className={styles.infoGrid}>
               <div className={styles.infoBlock}>
-                <span className={styles.infoLabel}>Altura</span>
+                <span className={styles.infoLabel}>Height</span>
                 <span className={styles.infoValue}>{heightM} m</span>
               </div>
               <div className={styles.infoBlock}>
-                <span className={styles.infoLabel}>Peso</span>
+                <span className={styles.infoLabel}>Weight</span>
                 <span className={styles.infoValue}>{weightKg} kg</span>
               </div>
               <div className={styles.infoBlock}>
-                <span className={styles.infoLabel}>Exp. Base</span>
+                <span className={styles.infoLabel}>Base Exp.</span>
                 <span className={styles.infoValue}>{pokemon.base_experience ?? '—'}</span>
               </div>
               <div className={styles.infoBlock}>
-                <span className={styles.infoLabel}>Felicidade</span>
+                <span className={styles.infoLabel}>Happiness</span>
                 <span className={styles.infoValue}>{species.base_happiness ?? '—'}</span>
               </div>
             </div>

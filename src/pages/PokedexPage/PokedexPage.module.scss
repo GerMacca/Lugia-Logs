@@ -111,6 +111,7 @@
 // Linha superior (busca + botão)
 .filterRow {
   @include container;
+  max-width: 1800px;
   display: flex;
   align-items: center;
   gap: $space-3;
@@ -179,26 +180,45 @@
 .colsControl {
   display: none;
   align-items: center;
-  gap: $space-2;
+  gap: $space-1;
   flex-shrink: 0;
+  background: rgba($color-primary, 0.08);
+  border: 1px solid rgba($color-primary, 0.18);
+  border-radius: 8px;
+  padding: 3px;
 
   @include respond-to("md") {
     display: flex;
   }
 }
 
-.colsRange {
-  width: 64px;
-  accent-color: $color-primary;
+.colsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba($color-text, 0.4);
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba($color-primary, 0.15);
+    color: rgba($color-text, 0.75);
+  }
 }
 
-.colsValue {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: $color-text-faint-light;
-  min-width: 1ch;
-  text-align: center;
+.colsBtnActive {
+  background: $color-primary;
+  color: $color-text;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-text;
+  }
 }
 
 .filterToggle {
@@ -290,6 +310,21 @@
   }
 }
 
+// Header do painel mobile com "Clear all"
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: $space-2;
+  border-bottom: 1px solid rgba($color-primary, 0.1);
+}
+
+.panelActiveCount {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-faint-light;
+}
+
 // Seção dentro do painel (ex: Tipo, Geração...)
 .filterSection {
   display: flex;
@@ -369,17 +404,18 @@
 
 .gridInner {
   @include container;
+  max-width: 1800px;
   padding-block: $space-8 $space-20;
 
   @include respond-to("lg") {
     display: grid;
-    grid-template-columns: 210px 1fr;
+    grid-template-columns: 230px 1fr;
     gap: $space-8;
     align-items: start;
   }
 
   @include respond-to("xl") {
-    grid-template-columns: 210px 1fr 220px;
+    grid-template-columns: 230px 1fr 260px;
   }
 }
 
@@ -423,6 +459,61 @@
   display: flex;
   flex-direction: column;
   gap: $space-3;
+}
+
+// Sidebar sticky header
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding-bottom: 0;
+}
+
+.sidebarTitleRow {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.sidebarTitle {
+  font-family: $font-family-display;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+}
+
+.sidebarBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  border-radius: $radius-full;
+  background: $color-primary;
+  color: $color-white;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.clearAllBtn {
+  font-family: $font-family-base;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 .sidebarHead {
@@ -900,8 +991,7 @@
 }
 
 // ── Error / Empty ─────────────────────────────────────────────────
-.errorState,
-.emptyState {
+.errorState {
   @include flex-center;
   padding: $space-16;
   color: $color-text-sub;
@@ -909,6 +999,49 @@
   border: 1px dashed rgba($color-primary, 0.25);
   border-radius: $radius-xl;
   text-align: center;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%       { transform: translateY(-14px) rotate(2deg); }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-16 $space-8;
+  animation: fadeSlideUp 0.4s ease both;
+}
+
+.emptyStateImg {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 12px 24px rgba($color-primary, 0.2));
+  margin-bottom: $space-6;
+}
+
+.emptyStateTitle {
+  font-family: $font-family-display;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  margin-bottom: $space-2;
+}
+
+.emptyStateSub {
+  font-size: $font-size-sm;
+  color: $color-text-faint-light;
+  text-align: center;
+  max-width: 280px;
+  line-height: $line-height-relaxed;
 }
 
 @keyframes dotBounce {

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { MdCatchingPokemon } from "react-icons/md";
 import { CiCircleList } from "react-icons/ci";
 import { PiBaseballCap } from "react-icons/pi";
+
 import styles from './FeaturesSection.module.scss';
 
 interface Feature {
@@ -20,29 +21,29 @@ const FEATURES: Feature[] = [
     icon: <MdCatchingPokemon size={30} />,
     title: 'Pokédex',
     description:
-      'Explore todos os 900+ Pokémons com detalhes completos: tipos, stats base, habilidades, evoluções e sprites oficiais.',
+      'Explore over 900 Pokémon with full details: types, base stats, abilities, evolutions, and official sprites.',
     path: '/pokedex',
-    linkLabel: 'Explorar Pokédex',
+    linkLabel: 'Explore Pokédex',
     accent: '#485a95',
   },
   {
     id: 'generations',
     icon: <CiCircleList size={30} />,
-    title: 'Gerações',
+    title: 'Generations',
     description:
-      'Da Geração I à IX, veja quais Pokémons foram introduzidos em cada era, as regiões, jogos e marcos históricos.',
+      'From Generation I to IX, discover which Pokémon were introduced in each era, along with regions, games, and major milestones.',
     path: '/generations',
-    linkLabel: 'Ver Gerações',
+    linkLabel: 'View Generations',
     accent: '#4f83dd',
   },
   {
     id: 'trainers',
     icon: <PiBaseballCap size={30} />,
-    title: 'Treinadores',
+    title: 'Trainers',
     description:
-      'Conheça os treinadores mais icônicos do universo Pokémon: líderes de ginásio, membros da Elite 4 e campeões.',
+      'Meet the most iconic trainers in the Pokémon universe: Gym Leaders, Elite Four members, and Champions.',
     path: '/trainers',
-    linkLabel: 'Ver Treinadores',
+    linkLabel: 'View Trainers',
     accent: '#9394d8',
   }
 ];
@@ -52,13 +53,13 @@ const FeaturesSection: React.FC = () => {
     <section className={styles.section}>
       <div className={styles.inner}>
         <div className={styles.header}>
-          <p className={styles.eyebrow}>O que você encontra aqui</p>
+          <p className={styles.eyebrow}>What you'll find here</p>
           <h2 className={styles.title}>
-            Tudo sobre o universo{' '}
-            <span className={styles.titleAccent}>Pokémon</span>
+            Everything about the{' '}
+            <span className={styles.titleAccent}>Pokémon</span> universe
           </h2>
           <p className={styles.subtitle}>
-            Dados completos e atualizados, organizados para você explorar com facilidade.
+            Complete and up-to-date data, organized so you can explore it easily.
           </p>
         </div>
 

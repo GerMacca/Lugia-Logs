@@ -1,12 +1,14 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+
 import MainLayout from '../../layouts/MainLayout/MainLayout';
 import { usePokedex } from '../../hooks/usePokedex';
 import type { SortBy } from '../../hooks/usePokedex';
 import { usePokemonOfDay } from '../../hooks/usePokemonOfDay';
 import type { PokemonDetail } from '../../types/pokemon.types';
-import styles from './PokedexPage.module.scss';
 
+import styles from './PokedexPage.module.scss';
+import psyduck from '../../assets/psyduck.png'
 const PAGE_SIZE = 50;
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -39,15 +41,6 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
   fairy: { bg: '#ee99ac', text: '#1a0810' },
 };
 
-const TYPE_NAMES_PT: Record<string, string> = {
-  normal: 'Normal', fire: 'Fogo', water: 'Água',
-  electric: 'Elétrico', grass: 'Planta', ice: 'Gelo',
-  fighting: 'Lutador', poison: 'Venenoso', ground: 'Terrestre',
-  flying: 'Voador', psychic: 'Psíquico', bug: 'Inseto',
-  rock: 'Pedra', ghost: 'Fantasma', dragon: 'Dragão',
-  dark: 'Sombrio', steel: 'Aço', fairy: 'Fada',
-};
-
 const TYPES = Object.keys(TYPE_COLORS);
 
 // ── Gerações ──────────────────────────────────────────────────────
@@ -55,22 +48,22 @@ const GENS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 // ── Buckets de altura (decímetros) ────────────────────────────────
 const HEIGHT_BUCKETS = [
-  { key: 'small', label: 'Pequeno', desc: '≤ 0,5m' },
-  { key: 'medium', label: 'Médio', desc: '0,6–1,5m' },
-  { key: 'large', label: 'Grande', desc: '≥ 1,6m' },
+  { key: 'small', label: 'Small', desc: '≤ 0.5m' },
+  { key: 'medium', label: 'Medium', desc: '0.6–1.5m' },
+  { key: 'large', label: 'Large', desc: '≥ 1.6m' },
 ];
 
 // ── Buckets de peso (hectogramas) ─────────────────────────────────
 const WEIGHT_BUCKETS = [
-  { key: 'light', label: 'Leve', desc: '≤ 10kg' },
-  { key: 'medium', label: 'Médio', desc: '10–100kg' },
-  { key: 'heavy', label: 'Pesado', desc: '≥ 100kg' },
+  { key: 'light', label: 'Light', desc: '≤ 10kg' },
+  { key: 'medium', label: 'Medium', desc: '10–100kg' },
+  { key: 'heavy', label: 'Heavy', desc: '≥ 100kg' },
 ];
 
 // ── Opções de ordenação ───────────────────────────────────────────
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
-  { value: 'id', label: 'Número (padrão)' },
-  { value: 'name', label: 'Nome A–Z' }
+  { value: 'id', label: 'Number (default)' },
+  { value: 'name', label: 'Name A–Z' }
 ];
 
 // ── Skeleton ──────────────────────────────────────────────────────
@@ -136,7 +129,7 @@ function PokemonCard({ pokemon }: { pokemon: PokemonDetail }) {
                 className={styles.cardType}
                 style={{ background: c.bg, color: c.text }}
               >
-                {TYPE_NAMES_PT[type.name] ?? capitalize(type.name)}
+                {capitalize(type.name)}
               </span>
             );
           })}
@@ -148,9 +141,7 @@ function PokemonCard({ pokemon }: { pokemon: PokemonDetail }) {
 
 // ── Pokémon do Dia ────────────────────────────────────────────────
 const STAT_KEYS = ['hp', 'attack', 'defense', 'speed'];
-const STAT_PT: Record<string, string> = {
-  hp: 'HP', attack: 'Ataque', defense: 'Defesa', speed: 'Veloc.',
-};
+const statLabel = (name: string) => name === 'hp' ? 'HP' : capitalize(name);
 
 function PokemonOfDay() {
   const { pokemon, loading } = usePokemonOfDay();
@@ -174,7 +165,7 @@ function PokemonOfDay() {
   const artwork =
     pokemon.sprites.other['official-artwork'].front_default ??
     pokemon.sprites.front_default;
-  const today = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+  const today = new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
 
   const stats = pokemon.stats
     .filter(s => STAT_KEYS.includes(s.stat.name))
@@ -191,7 +182,7 @@ function PokemonOfDay() {
     >
       {/* Cabeçalho */}
       <div className={styles.potdHeader}>
-        <span className={styles.potdTitle}>Pokémon do Dia</span>
+        <span className={styles.potdTitle}>Today's Pokémon</span>
         <span className={styles.potdDate}>{today}</span>
       </div>
 
@@ -224,7 +215,7 @@ function PokemonOfDay() {
                 className={styles.potdType}
                 style={{ background: c.bg, color: c.text }}
               >
-                {TYPE_NAMES_PT[type.name] ?? capitalize(type.name)}
+                {capitalize(type.name)}
               </span>
             );
           })}
@@ -234,7 +225,7 @@ function PokemonOfDay() {
           {stats.map(s => (
             <div key={s.stat.name} className={styles.potdStat}>
               <div className={styles.potdStatRow}>
-                <span className={styles.potdStatName}>{STAT_PT[s.stat.name] ?? s.stat.name}</span>
+                <span className={styles.potdStatName}>{statLabel(s.stat.name)}</span>
                 <span className={styles.potdStatVal}>{s.base_stat}</span>
               </div>
               <div className={styles.potdStatBar}>
@@ -251,7 +242,7 @@ function PokemonOfDay() {
         </div>
 
         <Link to={`/pokedex/${pokemon.id}`} className={styles.potdLink}>
-          Ver detalhes
+          See Details
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -310,6 +301,14 @@ const PokedexPage: React.FC = () => {
     weightFilter.length +
     (sortBy !== 'id' ? 1 : 0);
 
+  const clearAll = () => {
+    setTypeFilter([]);
+    setGenFilter([]);
+    setHeightFilter([]);
+    setWeightFilter([]);
+    setSortBy('id');
+  };
+
   // ── Filtros: painel overlay ───────────────────────────────────────
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterBarRef = useRef<HTMLDivElement>(null);
@@ -358,30 +357,30 @@ const PokedexPage: React.FC = () => {
       <div className={styles.pageHeader}>
         <div className={styles.headerBlob} aria-hidden="true" />
         <div className={styles.headerInner}>
-          <p className={styles.eyebrow}>Explorar</p>
+          <p className={styles.eyebrow}>Discover</p>
           <h1 className={styles.pageTitle}>
             Poké<span className={styles.titleAccent}>dex</span>
           </h1>
           <p className={styles.pageSubtitle}>
-            Explore todos os Pokémons das 9 gerações com tipos, stats,
-            habilidades e muito mais.
+            Explore every Pokémon from all 9 generations with types, stats,
+            abilities, and much more.
           </p>
           <div className={styles.headerStats}>
             <div className={styles.hStat}>
               <span className={styles.hStatValue}>
                 {total > 0 ? `${total}+` : '1000+'}
               </span>
-              <span className={styles.hStatLabel}>Pokémons</span>
+              <span className={styles.hStatLabel}>Pokémon</span>
             </div>
             <div className={styles.hStatDivider} />
             <div className={styles.hStat}>
               <span className={styles.hStatValue}>18</span>
-              <span className={styles.hStatLabel}>Tipos</span>
+              <span className={styles.hStatLabel}>Types</span>
             </div>
             <div className={styles.hStatDivider} />
             <div className={styles.hStat}>
               <span className={styles.hStatValue}>9</span>
-              <span className={styles.hStatLabel}>Gerações</span>
+              <span className={styles.hStatLabel}>Generations</span>
             </div>
           </div>
         </div>
@@ -404,46 +403,50 @@ const PokedexPage: React.FC = () => {
             <input
               type="text"
               className={styles.searchInput}
-              placeholder="Buscar por nome..."
+              placeholder="Search by name..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              aria-label="Buscar Pokémon por nome"
+              aria-label="Search Pokémon by name"
             />
             {search && (
               <button
                 className={styles.searchClear}
                 onClick={() => setSearch('')}
-                aria-label="Limpar busca"
+                aria-label="Clear search"
               >
                 ×
               </button>
             )}
           </div>
 
-          <div className={styles.colsControl}>
-            <input
-              type="range"
-              className={styles.colsRange}
-              value={rgValue}
-              min={3}
-              max={5}
-              step={1}
-              onChange={e => setRgValue(Number(e.target.value))}
-              aria-label="Colunas por linha"
-            />
-            <span className={styles.colsValue}>{rgValue}</span>
+          <div className={styles.colsControl} role="group" aria-label="Columns per row">
+            {([3, 4, 5] as const).map(n => (
+              <button
+                key={n}
+                className={`${styles.colsBtn}${rgValue === n ? ` ${styles.colsBtnActive}` : ''}`}
+                onClick={() => setRgValue(n)}
+                aria-pressed={rgValue === n}
+                title={`${n} columns per row`}
+              >
+                <svg width="16" height="14" viewBox={`0 0 ${n * 4 + (n - 1) * 2} 14`} fill="none" aria-hidden="true">
+                  {Array.from({ length: n }).map((_, i) => (
+                    <rect key={i} x={i * 6} y={0} width={4} height={14} rx={1} fill="currentColor" />
+                  ))}
+                </svg>
+              </button>
+            ))}
           </div>
 
           <button
             className={`${styles.filterToggle}${filtersOpen ? ` ${styles.filterToggleOpen}` : ''}`}
             onClick={() => setFiltersOpen(v => !v)}
             aria-expanded={filtersOpen}
-            aria-label="Abrir filtros"
+            aria-label="Open filters"
           >
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
               <path d="M1 3h13M3 7.5h9M5.5 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
-            Filtros
+            Filters
             {activeFilterCount > 0 && (
               <span className={styles.filterBadge}>{activeFilterCount}</span>
             )}
@@ -457,13 +460,20 @@ const PokedexPage: React.FC = () => {
         >
           <div className={styles.filterPanelInner}>
 
+            {activeFilterCount > 0 && (
+              <div className={styles.panelHeader}>
+                <span className={styles.panelActiveCount}>{activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active</span>
+                <button className={styles.clearAllBtn} onClick={clearAll}>Clear all</button>
+              </div>
+            )}
+
             {/* Seção: Ordenação */}
             <div className={styles.filterSection}>
               <div className={styles.filterSectionHead}>
-                <span className={styles.filterSectionLabel}>Ordenação</span>
+                <span className={styles.filterSectionLabel}>Order</span>
                 {sortBy !== 'id' && (
                   <button className={styles.clearBtn} onClick={() => setSortBy('id')}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
@@ -471,7 +481,7 @@ const PokedexPage: React.FC = () => {
                 className={styles.sortSelect}
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value as SortBy)}
-                aria-label="Ordenar Pokémons"
+                aria-label="Sort Pokémon"
               >
                 {SORT_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -482,14 +492,14 @@ const PokedexPage: React.FC = () => {
             {/* Seção: Tipo */}
             <div className={styles.filterSection}>
               <div className={styles.filterSectionHead}>
-                <span className={styles.filterSectionLabel}>Tipo</span>
+                <span className={styles.filterSectionLabel}>Type</span>
                 {typeFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setTypeFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por tipo">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by type">
                 {TYPES.map(type => {
                   const c = TYPE_COLORS[type];
                   const isActive = typeFilter.includes(type);
@@ -506,7 +516,7 @@ const PokedexPage: React.FC = () => {
                       )}
                       aria-pressed={isActive}
                     >
-                      {TYPE_NAMES_PT[type]}
+                      {capitalize(type)}
                     </button>
                   );
                 })}
@@ -516,14 +526,14 @@ const PokedexPage: React.FC = () => {
             {/* Seção: Geração */}
             <div className={styles.filterSection}>
               <div className={styles.filterSectionHead}>
-                <span className={styles.filterSectionLabel}>Geração</span>
+                <span className={styles.filterSectionLabel}>Generation</span>
                 {genFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setGenFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por geração">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by generation">
                 {GENS.map(gen => {
                   const isActive = genFilter.includes(gen);
                   return (
@@ -545,14 +555,14 @@ const PokedexPage: React.FC = () => {
             {/* Seção: Altura */}
             <div className={styles.filterSection}>
               <div className={styles.filterSectionHead}>
-                <span className={styles.filterSectionLabel}>Altura</span>
+                <span className={styles.filterSectionLabel}>Height</span>
                 {heightFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setHeightFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por altura">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by height">
                 {HEIGHT_BUCKETS.map(({ key, label, desc }) => {
                   const isActive = heightFilter.includes(key);
                   return (
@@ -575,14 +585,14 @@ const PokedexPage: React.FC = () => {
             {/* Seção: Peso */}
             <div className={styles.filterSection}>
               <div className={styles.filterSectionHead}>
-                <span className={styles.filterSectionLabel}>Peso</span>
+                <span className={styles.filterSectionLabel}>Weight</span>
                 {weightFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setWeightFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por peso">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by weight">
                 {WEIGHT_BUCKETS.map(({ key, label, desc }) => {
                   const isActive = weightFilter.includes(key);
                   return (
@@ -612,15 +622,32 @@ const PokedexPage: React.FC = () => {
         <div className={styles.gridInner}>
 
           {/* Sidebar de filtros (desktop) */}
-          <aside className={styles.sidebar} aria-label="Filtros">
+          <aside className={styles.sidebar} aria-label="Filters">
+
+            {/* Sidebar header */}
+            <div className={styles.sidebarHeader}>
+              <div className={styles.sidebarTitleRow}>
+                <span className={styles.sidebarTitle}>Filters</span>
+                {activeFilterCount > 0 && (
+                  <span className={styles.sidebarBadge}>{activeFilterCount}</span>
+                )}
+              </div>
+              {activeFilterCount > 0 && (
+                <button className={styles.clearAllBtn} onClick={clearAll}>
+                  Clear all
+                </button>
+              )}
+            </div>
+
+            <hr className={styles.sidebarDivider} />
 
             {/* Ordenação */}
             <div className={styles.sidebarSection}>
               <div className={styles.sidebarHead}>
-                <span className={styles.sidebarLabel}>Ordenação</span>
+                <span className={styles.sidebarLabel}>Order</span>
                 {sortBy !== 'id' && (
                   <button className={styles.clearBtn} onClick={() => setSortBy('id')}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
@@ -628,7 +655,7 @@ const PokedexPage: React.FC = () => {
                 className={styles.sortSelect}
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value as SortBy)}
-                aria-label="Ordenar Pokémons"
+                aria-label="Sort Pokémon"
               >
                 {SORT_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -641,14 +668,14 @@ const PokedexPage: React.FC = () => {
             {/* Tipo */}
             <div className={styles.sidebarSection}>
               <div className={styles.sidebarHead}>
-                <span className={styles.sidebarLabel}>Tipo</span>
+                <span className={styles.sidebarLabel}>Type</span>
                 {typeFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setTypeFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por tipo">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by type">
                 {TYPES.map(type => {
                   const c = TYPE_COLORS[type];
                   const isActive = typeFilter.includes(type);
@@ -665,7 +692,7 @@ const PokedexPage: React.FC = () => {
                       )}
                       aria-pressed={isActive}
                     >
-                      {TYPE_NAMES_PT[type]}
+                      {capitalize(type)}
                     </button>
                   );
                 })}
@@ -677,14 +704,14 @@ const PokedexPage: React.FC = () => {
             {/* Geração */}
             <div className={styles.sidebarSection}>
               <div className={styles.sidebarHead}>
-                <span className={styles.sidebarLabel}>Geração</span>
+                <span className={styles.sidebarLabel}>Generation</span>
                 {genFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setGenFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por geração">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by generation">
                 {GENS.map(gen => {
                   const isActive = genFilter.includes(gen);
                   return (
@@ -708,14 +735,14 @@ const PokedexPage: React.FC = () => {
             {/* Altura */}
             <div className={styles.sidebarSection}>
               <div className={styles.sidebarHead}>
-                <span className={styles.sidebarLabel}>Altura</span>
+                <span className={styles.sidebarLabel}>Height</span>
                 {heightFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setHeightFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por altura">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by height">
                 {HEIGHT_BUCKETS.map(({ key, label, desc }) => {
                   const isActive = heightFilter.includes(key);
                   return (
@@ -740,14 +767,14 @@ const PokedexPage: React.FC = () => {
             {/* Peso */}
             <div className={styles.sidebarSection}>
               <div className={styles.sidebarHead}>
-                <span className={styles.sidebarLabel}>Peso</span>
+                <span className={styles.sidebarLabel}>Weight</span>
                 {weightFilter.length > 0 && (
                   <button className={styles.clearBtn} onClick={() => setWeightFilter([])}>
-                    Limpar
+                    Clear
                   </button>
                 )}
               </div>
-              <div className={styles.typeGrid} role="group" aria-label="Filtrar por peso">
+              <div className={styles.typeGrid} role="group" aria-label="Filter by weight">
                 {WEIGHT_BUCKETS.map(({ key, label, desc }) => {
                   const isActive = weightFilter.includes(key);
                   return (
@@ -769,14 +796,13 @@ const PokedexPage: React.FC = () => {
 
           </aside>
 
-          {/* Conteúdo principal */}
           <div className={styles.gridMain}>
 
             {!loading && !isLoadingAll && !error && (
               <p className={styles.resultsInfo}>
                 {isFiltered
-                  ? `${pokemon.length} resultado${pokemon.length !== 1 ? 's' : ''} encontrado${pokemon.length !== 1 ? 's' : ''}`
-                  : `Mostrando ${pokemon.length} de ${total} Pokémons`
+                  ? `${pokemon.length} result${pokemon.length !== 1 ? 's' : ''} found`
+                  : `Showing ${pokemon.length} of ${total} Pokémon`
                 }
               </p>
             )}
@@ -789,7 +815,7 @@ const PokedexPage: React.FC = () => {
 
             {isLoadingAll && !loading && (
               <p className={styles.loadingAllMsg}>
-                Carregando todos os Pokémons para ordenar…
+                Loading all Pokémon for sorting…
               </p>
             )}
 
@@ -812,7 +838,7 @@ const PokedexPage: React.FC = () => {
 
             {!loading && !isLoadingAll && !error && pokemon.length === 0 && isFiltered && loadingAll && (
               <div className={styles.searchingState}>
-                <p className={styles.searchingText}>Buscando Pokémon</p>
+                <p className={styles.searchingText}>Searching...</p>
                 <div className={styles.searchingDots}>
                   <span /><span /><span />
                 </div>
@@ -821,14 +847,21 @@ const PokedexPage: React.FC = () => {
 
             {!loading && !isLoadingAll && !error && pokemon.length === 0 && (!isFiltered || !loadingAll) && (
               <div className={styles.emptyState}>
-                <p>Nenhum Pokémon encontrado para essa busca.</p>
+                <img
+                  src={psyduck}
+                  alt="Psyduck confused"
+                  className={styles.emptyStateImg}
+                  draggable={false}
+                />
+                <p className={styles.emptyStateTitle}>No Pokémon found!</p>
+                <p className={styles.emptyStateSub}>Even Psyduck can't figure out what you're looking for.</p>
               </div>
             )}
 
           </div>
 
           {/* Sidebar direita: Pokémon do Dia (desktop xl+) */}
-          <aside className={styles.rightSidebar} aria-label="Pokémon do Dia">
+          <aside className={styles.rightSidebar} aria-label="Pokémon of the Day">
             <PokemonOfDay />
           </aside>
 
@@ -841,6 +874,7 @@ const PokedexPage: React.FC = () => {
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Voltar ao início da página"
         aria-hidden={!showScrollTop}
+        title='Back to top'
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M8 12V4M4 7l4-4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

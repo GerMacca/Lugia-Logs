@@ -9,9 +9,9 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Pokédex',     path: '/pokedex'     },
-  { label: 'Gerações',    path: '/generations'  },
-  { label: 'Treinadores', path: '/trainers'     },
+  { label: 'Pokédex', path: '/pokedex' },
+  { label: 'Generations', path: '/generations' },
+  { label: 'Trainers', path: '/trainers' },
 ];
 
 const Navbar: React.FC = () => {
@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
     <header className={styles.header}>
 
       {/* ── Linha do topo ────────────────────────────────────────── */}
-      <nav className={styles.nav} aria-label="Navegação principal">
+      <nav className={styles.nav} aria-label="Main navigation">
 
         {/* Logo */}
         <Link to="/" className={styles.logo} onClick={close}>
@@ -59,15 +59,15 @@ const Navbar: React.FC = () => {
 
         {/* Ações (desktop) */}
         <div className={styles.actions}>
-          <Link to="/login"    className={styles.loginBtn}>Entrar</Link>
-          <Link to="/register" className={styles.registerBtn}>Registrar</Link>
+          <Link to="/login" className={styles.loginBtn}>Login</Link>
+          <Link to="/register" className={styles.registerBtn}>Sign up</Link>
         </div>
 
         {/* Hamburger (mobile) */}
         <button
           className={`${styles.burger}${menuOpen ? ` ${styles.burgerOpen}` : ''}`}
           onClick={() => setMenuOpen(v => !v)}
-          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
         >
@@ -101,8 +101,8 @@ const Navbar: React.FC = () => {
           </ul>
 
           <div className={styles.mobileActions}>
-            <Link to="/login"    className={styles.mobileLoginBtn}    onClick={close}>Entrar</Link>
-            <Link to="/register" className={styles.mobileRegisterBtn} onClick={close}>Registrar</Link>
+            <Link to="/login" className={styles.mobileLoginBtn} onClick={close}>Login</Link>
+            <Link to="/register" className={styles.mobileRegisterBtn} onClick={close}>Sign up</Link>
           </div>
 
         </div>

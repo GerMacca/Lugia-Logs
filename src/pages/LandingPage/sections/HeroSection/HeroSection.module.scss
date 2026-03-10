@@ -136,19 +136,43 @@
 
 .btnPrimary {
   @include button-base;
-  padding: $space-4 $space-8;
-  font-size: $font-size-md;
-  background: $color-primary;
+  padding: $space-4 $space-10;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
   color: $color-white;
+  background: linear-gradient(135deg, #5f6fff, #7a8cff);
+  border: none;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(95, 111, 255, 0.35);
+  transition: all 0.25s ease;
 
   &:hover {
-    background: $color-primary-dark;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba($color-primary, 0.28);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 14px 40px rgba(95, 111, 255, 0.45);
+    filter: brightness(1.05);
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.25),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &:hover::after {
+    opacity: 1;
   }
 }
 
@@ -367,7 +391,9 @@
   background: rgba($color-primary, 0.25);
   cursor: pointer;
   padding: 0;
-  transition: background $transition-base, transform $transition-base;
+  transition:
+    background $transition-base,
+    transform $transition-base;
 
   &:hover {
     background: rgba($color-primary, 0.5);

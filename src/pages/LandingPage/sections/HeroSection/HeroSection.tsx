@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './HeroSection.module.scss';
+
 import LUGIA1_ART from '../../../../assets/lugia.png';
 import LUGIA2_ART from '../../../../assets/lugia2.png';
 import LUGIA3_ART from '../../../../assets/lugia3.png';
 import LUGIA4_ART from '../../../../assets/lugia4.png';
 import LUGIA5_ART from '../../../../assets/lugia5.png';
 
+import styles from './HeroSection.module.scss';
+
 const STATS = [
-  { value: '900+', label: 'Pokémons' },
-  { value: '9', label: 'Gerações' },
-  { value: '18', label: 'Tipos' },
+  { value: '1000+', label: 'Pokémon' },
+  { value: '9', label: 'Generations' },
+  { value: '18', label: 'Types' },
 ];
 
 const CAROUSEL_ITEMS = [
@@ -48,36 +50,23 @@ const HeroSection: React.FC = () => {
       <div className={styles.content}>
 
         <h1 className={styles.title}>
-          Explore o universo
-          <span className={styles.titleGradient}> Pokémon</span>
+          Explore the
+          <span className={styles.titleGradient}> Pokémon </span>
+          universe
           <br />
-          como nunca antes!
+          like never before!
         </h1>
 
         <p className={styles.subtitle}>
-          Uma enciclopédia digital completa, dinâmica e interativa que
-          reúne informações detalhadas de todas as gerações Pokémon,
-          incluindo espécies, tipos, habilidades, evoluções, estatísticas,
-          formas alternativas e muito mais. Tudo isso apresentado de maneira
-          organizada, visual e fácil de explorar, com dados atualizados em
-          tempo real
+          A complete, dynamic, and interactive digital encyclopedia that brings
+          together detailed information from every Pokémon generation, including
+          species, types, abilities, evolutions, stats, alternate forms, and much more.
+          All presented in an organized, visual, and easy-to-explore way, with data
+          updated in real time.
         </p>
-
         <div className={styles.actions}>
           <Link to="/pokedex" className={styles.btnPrimary}>
-            Explorar Pokédex
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M3 8h10M9 4l4 4-4 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Link>
-          <Link to="/generations" className={styles.btnSecondary}>
-            Ver Gerações
+            Start my journey!
           </Link>
         </div>
 

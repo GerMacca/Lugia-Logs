@@ -7,9 +7,9 @@ const POKEMON_COUNT = 1010;
 
 function getDailyId(): number {
   const d = new Date();
-  const seed =
-    d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-  return (seed % POKEMON_COUNT) + 1;
+  const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  const hash = Math.imul(seed, 0x9e3779b1) >>> 0;
+  return (hash % POKEMON_COUNT) + 1;
 }
 
 const formatFallback = (name: string) =>

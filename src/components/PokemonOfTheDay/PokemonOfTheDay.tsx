@@ -29,35 +29,14 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
   fairy: { bg: '#ee99ac', text: '#1a0810' },
 };
 
-// ── Nomes de tipo em português ────────────────────────────────────
-const TYPE_NAMES_PT: Record<string, string> = {
-  normal: 'Normal',
-  fire: 'Fogo',
-  water: 'Água',
-  electric: 'Elétrico',
-  grass: 'Planta',
-  ice: 'Gelo',
-  fighting: 'Lutador',
-  poison: 'Venenoso',
-  ground: 'Terrestre',
-  flying: 'Voador',
-  psychic: 'Psíquico',
-  bug: 'Inseto',
-  rock: 'Pedra',
-  ghost: 'Fantasma',
-  dragon: 'Dragão',
-  dark: 'Sombrio',
-  steel: 'Aço',
-  fairy: 'Fada',
-};
 
 const STAT_NAMES: Record<string, string> = {
   hp: 'HP',
-  attack: 'Ataque',
-  defense: 'Defesa',
-  'special-attack': 'Atq. Esp.',
-  'special-defense': 'Def. Esp.',
-  speed: 'Velocidade',
+  attack: 'Attack',
+  defense: 'Defense',
+  'special-attack': 'Sp. Atk',
+  'special-defense': 'Sp. Def',
+  speed: 'Speed',
 };
 
 // ── Helpers ───────────────────────────────────────────────────────
@@ -80,7 +59,7 @@ function getGenus(species: PokemonSpecies): string {
 }
 
 const formatDate = () =>
-  new Date().toLocaleDateString('pt-BR', {
+  new Date().toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -176,10 +155,10 @@ function PokemonCard({
         {/* Nome e badges */}
         <div className={styles.nameRow}>
           {species.is_legendary && (
-            <span className={styles.badge} data-kind="legendary">Lendário</span>
+            <span className={styles.badge} data-kind="legendary">Legendary</span>
           )}
           {species.is_mythical && (
-            <span className={styles.badge} data-kind="mythical">Mítico</span>
+            <span className={styles.badge} data-kind="mythical">Mythical</span>
           )}
           <h2 className={styles.pokeName}>{capitalize(pokemon.name)}</h2>
           {genus && <span className={styles.genus}>{genus}</span>}
@@ -195,7 +174,7 @@ function PokemonCard({
                 className={styles.typeBadge}
                 style={{ background: colors.bg, color: colors.text }}
               >
-                {TYPE_NAMES_PT[type.name] ?? capitalize(type.name)}
+                {capitalize(type.name)}
               </span>
             );
           })}
@@ -210,7 +189,7 @@ function PokemonCard({
 
         {/* Stats */}
         <div className={styles.statsSection}>
-          <h3 className={styles.sectionLabel}>Estatísticas Base</h3>
+          <h3 className={styles.sectionLabel}>Base stats</h3>
           <div className={styles.statsList}>
             {pokemon.stats.map(({ stat, base_stat }) => (
               <div key={stat.name} className={styles.statRow}>
@@ -232,13 +211,13 @@ function PokemonCard({
 
         {/* Habilidades */}
         <div className={styles.abilitiesSection}>
-          <h3 className={styles.sectionLabel}>Habilidades</h3>
+          <h3 className={styles.sectionLabel}>Abilities</h3>
           <div className={styles.abilitiesList}>
             {abilities.map(({ slug, label, is_hidden }) => (
               <div key={slug} className={styles.abilityTag}>
                 {label}
                 {is_hidden && (
-                  <span className={styles.hiddenBadge}>Oculta</span>
+                  <span className={styles.hiddenBadge}>Hidden</span>
                 )}
               </div>
             ))}
@@ -248,24 +227,24 @@ function PokemonCard({
         {/* Medidas */}
         <div className={styles.measurements}>
           <div className={styles.measurement}>
-            <span className={styles.measureLabel}>Altura</span>
+            <span className={styles.measureLabel}>Height</span>
             <span className={styles.measureValue}>{heightM} m</span>
           </div>
           <div className={styles.measureDivider} />
           <div className={styles.measurement}>
-            <span className={styles.measureLabel}>Peso</span>
+            <span className={styles.measureLabel}>Weight</span>
             <span className={styles.measureValue}>{weightKg} kg</span>
           </div>
           <div className={styles.measureDivider} />
           <div className={styles.measurement}>
-            <span className={styles.measureLabel}>Geração</span>
+            <span className={styles.measureLabel}>Generation</span>
             <span className={styles.measureValue}>Gen. {genRoman}</span>
           </div>
         </div>
 
         {/* CTA */}
         <Link to={`/pokedex/${pokemon.id}`} className={styles.detailLink}>
-          Ver ficha completa
+          See details
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path
               d="M3 8h10M9 4l4 4-4 4"
@@ -291,13 +270,12 @@ const PokemonOfTheDay: React.FC = () => {
       <div className={styles.inner}>
 
         <div className={styles.header}>
-          <p className={styles.eyebrow}>Pokémon do Dia</p>
+          <p className={styles.eyebrow}>Today's Pokémon</p>
           <h2 className={styles.title}>
-            Quem aparece <span className={styles.titleAccent}>hoje?</span>
+            Who appears <span className={styles.titleAccent}>today?</span>
           </h2>
           <p className={styles.subtitle}>
-            Um Pokémon diferente a cada dia! Confira curiosidades, stats e
-            habilidades do escolhido!
+            A different Pokémon every day! Check out its trivia, stats, and abilities.
           </p>
         </div>
 

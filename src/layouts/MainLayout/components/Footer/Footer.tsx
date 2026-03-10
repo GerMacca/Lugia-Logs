@@ -15,24 +15,24 @@ const Footer: React.FC = () => {
               </div>
             </Link>
             <p className={styles.brandTagline}>
-              Uma enciclopédia completa do universo Pokémon.
+              A complete encyclopedia of the Pokémon universe.
             </p>
           </div>
 
-          <nav className={styles.footerNav} aria-label="Links do rodapé">
+          <nav className={styles.footerNav} aria-label="Footer links">
             <div className={styles.navGroup}>
-              <span className={styles.navGroupTitle}>Explorar</span>
+              <span className={styles.navGroupTitle}>Explore</span>
               <ul className={styles.navList}>
                 <li><Link to="/pokedex" className={styles.navLink}>Pokédex</Link></li>
-                <li><Link to="/generations" className={styles.navLink}>Gerações</Link></li>
-                <li><Link to="/trainers" className={styles.navLink}>Treinadores</Link></li>
+                <li><Link to="/generations" className={styles.navLink}>Generations</Link></li>
+                <li><Link to="/trainers" className={styles.navLink}>Trainers</Link></li>
               </ul>
             </div>
             <div className={styles.navGroup}>
-              <span className={styles.navGroupTitle}>Conta</span>
+              <span className={styles.navGroupTitle}>Account</span>
               <ul className={styles.navList}>
-                <li><Link to="/login" className={styles.navLink}>Entrar</Link></li>
-                <li><Link to="/register" className={styles.navLink}>Registrar</Link></li>
+                <li><Link to="/login" className={styles.navLink}>Login</Link></li>
+                <li><Link to="/register" className={styles.navLink}>Sign up</Link></li>
               </ul>
             </div>
           </nav>
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
 
         <div className={styles.bottom}>
           <p className={styles.copy}>
-            © {new Date().getFullYear()} LugiaLogs. Dados fornecidos pela{' '}
+            © {new Date().getFullYear()} LugiaLogs. Data provided by{' '}
             <a
               href="https://pokeapi.co"
               target="_blank"
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
             .
           </p>
           <p className={styles.disclaimer}>
-            Pokémon e todos os nomes relacionados são marcas registradas da Nintendo / Game Freak.
+            Pokémon and all related names are trademarks of Nintendo / Game Freak.
           </p>
         </div>
       </div>

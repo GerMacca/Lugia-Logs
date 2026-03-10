@@ -9,7 +9,7 @@ const LoginPage: React.FC = () => {
     <MainLayout>
       <div className={styles.page}>
         <div className={styles.card}>
-          <h1 className={styles.title}>Entrar</h1>
+          <h1 className={styles.title}>Login</h1>
           <p className={styles.subtitle}>
             Não tem conta?{' '}
             <Link to="/register" className={styles.link}>Registre-se</Link>

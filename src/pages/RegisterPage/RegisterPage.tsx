@@ -12,7 +12,7 @@ const RegisterPage: React.FC = () => {
           <h1 className={styles.title}>Criar conta</h1>
           <p className={styles.subtitle}>
             Já tem conta?{' '}
-            <Link to="/login" className={styles.link}>Entrar</Link>
+            <Link to="/login" className={styles.link}>Login</Link>
           </p>
           <p className={styles.wip}>Formulário em construção.</p>
         </div>
