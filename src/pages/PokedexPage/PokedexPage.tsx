@@ -6,9 +6,10 @@ import { usePokedex } from '../../hooks/usePokedex';
 import type { SortBy } from '../../hooks/usePokedex';
 import { usePokemonOfDay } from '../../hooks/usePokemonOfDay';
 import type { PokemonDetail } from '../../types/pokemon.types';
+import psyduck from '../../assets/psyduck.png'
 
 import styles from './PokedexPage.module.scss';
-import psyduck from '../../assets/psyduck.png'
+
 const PAGE_SIZE = 50;
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
