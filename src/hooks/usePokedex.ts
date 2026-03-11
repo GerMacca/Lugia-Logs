@@ -125,12 +125,21 @@ export function usePokedex(): UsePokedexResult {
     return () => { cancelled = true; };
   }, [nameList, queryClient]);
 
+  const ALIASES: Record<string, string[]> = {
+    'gorda balofa rosa redonda': ['chansey'],
+    'goats': ['lugia', 'dragonite', 'gengar'],
+    'eeveelutions': ['jolteon','flareon','vaporeon','espeon','umbreon','glaceon','leafeon','sylveon']
+  }
+
   // ── Filtros + ordenação ───────────────────────────────────────────
   const filtered = useMemo(() => {
     return all
       .filter(p => {
         const q = search.toLowerCase().trim();
-        const matchesSearch = !q || p.name.toLowerCase().includes(q);
+        const aliasedNames = Object.entries(ALIASES)
+          .filter(([alias]) => alias === q)
+          .flatMap(([, names]) => names);
+        const matchesSearch = !q || p.name.toLowerCase().includes(q) || aliasedNames.includes(p.name.toLowerCase());
         const matchesType =
           typeFilter.length === 0 ||
           p.types.some(t => typeFilter.includes(t.type.name));
