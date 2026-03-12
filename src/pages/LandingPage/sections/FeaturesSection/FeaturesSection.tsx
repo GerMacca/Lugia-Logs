@@ -33,7 +33,7 @@ const FEATURES: Feature[] = [
     description:
       'From Generation I to IX, discover which Pokémon were introduced in each era, along with regions, games, and major milestones.',
     path: '/generations',
-    linkLabel: 'View Generations',
+    linkLabel: 'View Generations (developing)',
     accent: '#4f83dd',
   },
   {
@@ -43,7 +43,7 @@ const FEATURES: Feature[] = [
     description:
       'Meet the most iconic trainers in the Pokémon universe: Gym Leaders, Elite Four members, and Champions.',
     path: '/trainers',
-    linkLabel: 'View Trainers',
+    linkLabel: 'View Trainers (developing)',
     accent: '#9394d8',
   }
 ];

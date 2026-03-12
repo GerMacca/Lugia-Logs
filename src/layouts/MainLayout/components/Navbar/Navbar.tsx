@@ -10,8 +10,8 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Pokédex', path: '/pokedex' },
-  { label: 'Generations', path: '/generations' },
-  { label: 'Trainers', path: '/trainers' },
+  //{ label: 'Generations', path: '/generations' },
+  //{ label: 'Trainers', path: '/trainers' },
 ];
 
 const Navbar: React.FC = () => {
@@ -59,8 +59,7 @@ const Navbar: React.FC = () => {
 
         {/* Ações (desktop) */}
         <div className={styles.actions}>
-          <Link to="/login" className={styles.loginBtn}>Login</Link>
-          <Link to="/register" className={styles.registerBtn}>Sign up</Link>
+          <Link to='/buymeacoffe' className={styles.bmcBtn}>Buy me a coffee</Link>
         </div>
 
         {/* Hamburger (mobile) */}
@@ -101,8 +100,7 @@ const Navbar: React.FC = () => {
           </ul>
 
           <div className={styles.mobileActions}>
-            <Link to="/login" className={styles.mobileLoginBtn} onClick={close}>Login</Link>
-            <Link to="/register" className={styles.mobileRegisterBtn} onClick={close}>Sign up</Link>
+            <Link to="/buymeacoffe" className={styles.mobilebmcBtn} onClick={close}>Buy me a coffee</Link>
           </div>
 
         </div>
