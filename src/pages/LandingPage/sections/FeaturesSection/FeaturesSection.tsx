@@ -13,6 +13,7 @@ interface Feature {
   path: string;
   linkLabel: string;
   accent: string;
+  comingSoon?: boolean;
 }
 
 const FEATURES: Feature[] = [
@@ -21,7 +22,7 @@ const FEATURES: Feature[] = [
     icon: <MdCatchingPokemon size={30} />,
     title: 'Pokédex',
     description:
-      'Explore over 900 Pokémon with full details: types, base stats, abilities, evolutions, and official sprites.',
+      'Explore over 1000 Pokémon with full details: types, base stats, abilities, evolutions, and official sprites.',
     path: '/pokedex',
     linkLabel: 'Explore Pokédex',
     accent: '#485a95',
@@ -33,8 +34,9 @@ const FEATURES: Feature[] = [
     description:
       'From Generation I to IX, discover which Pokémon were introduced in each era, along with regions, games, and major milestones.',
     path: '/generations',
-    linkLabel: 'View Generations (developing)',
+    linkLabel: 'Coming soon',
     accent: '#4f83dd',
+    comingSoon: true,
   },
   {
     id: 'trainers',
@@ -43,9 +45,10 @@ const FEATURES: Feature[] = [
     description:
       'Meet the most iconic trainers in the Pokémon universe: Gym Leaders, Elite Four members, and Champions.',
     path: '/trainers',
-    linkLabel: 'View Trainers (developing)',
+    linkLabel: 'Coming soon',
     accent: '#9394d8',
-  }
+    comingSoon: true,
+  },
 ];
 
 const FeaturesSection: React.FC = () => {
@@ -67,18 +70,25 @@ const FeaturesSection: React.FC = () => {
           {FEATURES.map((feature) => (
             <article
               key={feature.id}
-              className={styles.card}
+              className={`${styles.card}${feature.comingSoon ? ` ${styles.cardDimmed}` : ''}`}
               style={{ '--card-accent': feature.accent } as React.CSSProperties}
             >
+              {feature.comingSoon && <span className={styles.comingSoonBadge}>Soon</span>}
               <div className={styles.cardIcon}>{feature.icon}</div>
               <h3 className={styles.cardTitle}>{feature.title}</h3>
               <p className={styles.cardDescription}>{feature.description}</p>
-              <Link to={feature.path} className={styles.cardLink}>
-                {feature.linkLabel}
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
+              {feature.comingSoon ? (
+                <span className={styles.cardLinkDisabled}>
+                  {feature.linkLabel}
+                </span>
+              ) : (
+                <Link to={feature.path} className={styles.cardLink}>
+                  {feature.linkLabel}
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              )}
             </article>
           ))}
         </div>

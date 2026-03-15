@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { pokemonService } from '../services/pokemon.service';
 import type { PokemonDetail, PokemonSpecies } from '../types/pokemon.types';
 
-const POKEMON_COUNT = 1010;
+const POKEMON_COUNT = 1025;
 
 function getDailyId(): number {
   const d = new Date();
@@ -78,7 +78,7 @@ export function usePokemonOfTheDay(): PokemonOfTheDayData {
 
         setAbilities(translatedAbilities);
       })
-      .catch(() => setError('Não foi possível carregar o Pokémon do dia.'))
+      .catch(() => setError('Could not load the Pokémon of the day.'))
       .finally(() => setLoading(false));
   }, []);
 

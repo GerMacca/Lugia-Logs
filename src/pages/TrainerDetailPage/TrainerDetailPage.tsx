@@ -10,8 +10,8 @@ const TrainerDetailPage: React.FC = () => {
   return (
     <MainLayout>
       <div className={styles.page}>
-        <h1 className={styles.title}>Treinador: {id}</h1>
-        <p className={styles.wip}>Detalhes em construção.</p>
+        <h1 className={styles.title}>Trainer: {id}</h1>
+        <p className={styles.wip}>Details under construction.</p>
       </div>
     </MainLayout>
   );

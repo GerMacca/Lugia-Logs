@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { pokemonService } from '../services/pokemon.service';
 import type { PokemonDetail } from '../types/pokemon.types';
 
-const POKEMON_COUNT = 1010; // mesmo valor de usePokemonOfTheDay
+const POKEMON_COUNT = 1025;
 
 function getTodayId(): number {
   const d = new Date();

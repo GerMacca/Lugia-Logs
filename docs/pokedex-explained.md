@@ -100,7 +100,7 @@ Ao navegar de volta para a Pokédex vinda da Detail Page, a página rola suaveme
 ```ts
 const [scrollTargetId, setScrollTargetId] = useState<number | null>(
   () => location.state?.scrollToId ?? null
-);
+); 
 
 useEffect(() => {
   if (!scrollTargetId) return;

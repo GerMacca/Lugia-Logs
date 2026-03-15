@@ -873,7 +873,7 @@ const PokedexPage: React.FC = () => {
       <button
         className={`${styles.scrollTopBtn}${showScrollTop ? ` ${styles.scrollTopBtnVisible}` : ''}`}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        aria-label="Voltar ao início da página"
+        aria-label="Back to top"
         aria-hidden={!showScrollTop}
         title='Back to top'
       >

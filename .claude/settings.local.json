@@ -4,7 +4,9 @@
       "Bash(npm install @tanstack/react-query)",
       "Bash(curl -L \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/other/official-artwork/54.png\" -o \"e:/LugiaLogs/public/psyduck.png\")",
       "Bash(curl -sI \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/other/official-artwork/54.png\")",
-      "Bash(curl -sI \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png\")"
+      "Bash(curl -sI \"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png\")",
+      "Bash(grep -n \"POKEMON_COUNT\\\\|TOTAL_POKEMON\\\\|MAX_POKEMON\" /e/LugiaLogs/src/**/*.ts /e/LugiaLogs/src/**/*.tsx)",
+      "Bash(git fetch:*)"
     ]
   }
 }

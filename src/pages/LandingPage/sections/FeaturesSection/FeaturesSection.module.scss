@@ -148,3 +148,44 @@
     gap: $space-3;
   }
 }
+
+.cardLinkDisabled {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-sub;
+  margin-top: $space-2;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.cardDimmed {
+  opacity: 0.65;
+
+  &:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba($color-primary, 0.1);
+  }
+
+  &:hover::before {
+    opacity: 0;
+  }
+}
+
+.comingSoonBadge {
+  position: absolute;
+  top: $space-4;
+  right: $space-4;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-text-sub;
+  background: rgba($color-primary, 0.07);
+  border: 1px solid rgba($color-primary, 0.12);
+  border-radius: $radius-full;
+  padding: 2px $space-3;
+}

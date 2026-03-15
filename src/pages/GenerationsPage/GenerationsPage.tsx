@@ -7,10 +7,10 @@ const GenerationsPage: React.FC = () => {
     <MainLayout>
       <div className={styles.page}>
         <div className={styles.header}>
-          <h1 className={styles.title}>Gerações</h1>
-          <p className={styles.subtitle}>Da Geração I à IX — história e Pokémons de cada era.</p>
+          <h1 className={styles.title}>Generations</h1>
+          <p className={styles.subtitle}>From Generation I to IX — history and Pokémon of each era.</p>
         </div>
-        <p className={styles.wip}>Em construção — em breve aqui.</p>
+        <p className={styles.wip}>Under construction — coming soon.</p>
       </div>
     </MainLayout>
   );
