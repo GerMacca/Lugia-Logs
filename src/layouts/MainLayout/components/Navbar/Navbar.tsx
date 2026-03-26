@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
 
         {/* Ações (desktop) */}
         <div className={styles.actions}>
-          <Link to='/buymeacoffe' className={styles.bmcBtn}>Buy me a coffee</Link>
+          <Link to='https://buymeacoffee.com/gemacca' className={styles.bmcBtn}>Buy me a coffee</Link>
         </div>
 
         {/* Hamburger (mobile) */}
